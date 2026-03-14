@@ -1182,16 +1182,16 @@
       actionsDiv.className = 'message-actions';
       actionsDiv.innerHTML = `
         <button class="copy-msg">
-          <i class="fas fa-copy"></i> Copy
+          <i class="fas fa-copy"></i>
         </button>
         <button class="speaker-msg">
-          <i class="fas fa-volume-up"></i> Speak
+          <i class="fas fa-volume-up"></i>
         </button>
       `;
       if (msg.role === 'assistant') {
         actionsDiv.innerHTML += `
           <button class="regenerate-msg">
-            <i class="fas fa-undo-alt"></i> Regenerate
+            <i class="fas fa-undo-alt"></i>
           </button>`;
       }
       wrapper.appendChild(actionsDiv);
