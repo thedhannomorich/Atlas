@@ -34,7 +34,7 @@
     <!-- Puter.js v2 -->
     <script src="https://js.puter.com/v2/"></script>
     <style>
-      * {
+          * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
@@ -45,12 +45,14 @@
         font-family: "Hind Siliguri", "Poppins", sans-serif;
         background: #f5f5f7;
         height: 100vh;
+        height: 100dvh; /* Use dynamic viewport height for mobile */
         display: flex;
         align-items: center;
         justify-content: center;
         color: #1e1e1e;
         transition: background 0.2s ease, color 0.2s ease;
         line-height: 1.5;
+        overflow: hidden; /* Prevent body scrolling */
       }
 
       body.dark-mode {
@@ -144,6 +146,7 @@
         width: 100%;
         max-width: 1000px;
         height: 90vh;
+        height: 90dvh; /* Use dynamic viewport height */
         max-height: 900px;
         background: #ffffff;
         border-radius: 28px;
@@ -171,6 +174,7 @@
         align-items: center;
         justify-content: space-between;
         background: #ffffff;
+        flex-shrink: 0; /* Prevent shrinking */
       }
 
       body.dark-mode .top-bar {
@@ -370,13 +374,14 @@
 
       /* chat container */
       .chat-container {
-        flex: 1;
+        flex: 1 1 auto; /* Allow growing and shrinking */
         overflow-y: auto;
         padding: 20px 16px;
         display: flex;
         flex-direction: column;
         gap: 20px;
         background: #ffffff;
+        min-height: 0; /* Critical for flexbox to respect overflow */
       }
 
       body.dark-mode .chat-container {
@@ -586,6 +591,7 @@
         padding: 12px 16px 18px;
         background: #ffffff;
         border-top: 1px solid #d0d0d0;
+        flex-shrink: 0; /* Prevent shrinking */
       }
 
       body.dark-mode .input-section {
@@ -775,7 +781,9 @@
         .chat-app {
           margin: 0;
           height: 100vh;
+          height: 100dvh; /* Use dynamic viewport height */
           max-height: 100vh;
+          max-height: 100dvh;
           border-radius: 0;
           border: none;
           background: #ffffff;
@@ -786,11 +794,12 @@
         }
 
         .top-bar {
-          padding: 12px 16px;
+          padding: 8px 12px; /* Reduced padding */
+          min-height: 56px; /* Ensure minimum height */
         }
 
         .app-name span {
-          font-size: 1.4rem;
+          font-size: 1.3rem;
         }
 
         .login-screen {
@@ -821,29 +830,33 @@
         }
 
         .input-section {
-          padding: 10px 12px 16px;
+          padding: 8px 12px 12px; /* Reduced padding */
+        }
+
+        .input-row {
+          padding: 2px 2px 2px 12px; /* Reduced padding */
         }
 
         .input-row textarea {
           font-size: 1rem;
-          padding: 10px 0;
+          padding: 8px 0; /* Reduced padding */
+          max-height: 100px;
         }
 
         .circle-btn {
-          width: 48px;
-          /* bigger tap zone */
-          height: 48px;
+          width: 44px; /* Slightly smaller but still touch-friendly */
+          height: 44px;
         }
 
         .add-dropdown {
-          bottom: 65px;
+          bottom: 55px;
           /* avoid overlap */
         }
 
         .settings-dropdown {
           right: 12px;
           width: 260px;
-          top: 70px;
+          top: 65px; /* Adjusted for smaller top bar */
         }
 
         /* remove any lingering transparency (blue tap) */
@@ -862,6 +875,11 @@
         body.dark-mode .icon-btn:active,
         body.dark-mode .circle-btn:active {
           background: #4a4a4a;
+        }
+
+        /* Ensure chat container takes available space */
+        .chat-container {
+          padding: 12px 12px;
         }
       }
 
@@ -903,8 +921,7 @@
         <div class="app-name">
           <!-- logo.png instead of brain icon (embedded as inline SVG fallback but we use img) -->
           <div class="logo-img">
-            <img src="data:image/svg+xml,%3Csvg
-													xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23000' stroke='%23333' stroke-width='2'/%3E%3Cpath fill='%23fff' d='M30 35 L70 35 L65 65 L50 75 L35 65 Z' /%3E%3Ctext x='50' y='52' font-size='26' text-anchor='middle' fill='%23fff' font-family='Arial' dy='.3em'%3EA%3C/text%3E%3C/svg%3E" alt="Atlas logo" style="width:36px; height:36px;">
+            <img src="logo.png" alt="Atlas logo" style="width:36px; height:36px;">
           </div>
           <span>Atlas</span>
         </div>
