@@ -111,8 +111,8 @@
             transform: scale(0.99);
         }
         .login-btn img {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             filter: brightness(0) invert(1); /* white icon */
         }
 
@@ -157,8 +157,8 @@
             gap: 12px;
         }
         .app-name img {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             filter: brightness(0); /* black icon */
         }
         body.dark-mode .app-name img {
@@ -177,9 +177,9 @@
         .icon-btn {
             background: transparent;
             border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 40px;
+            width: 36px;
+            height: 36px;
+            border-radius: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -189,7 +189,7 @@
         }
         .icon-btn:hover { background: #e0e0e0; }
         body.dark-mode .icon-btn:hover { background: #3a3a3a; }
-        .icon-btn img { width: 20px; height: 20px; filter: brightness(0); }
+        .icon-btn img { width: 18px; height: 18px; filter: brightness(0); }
         body.dark-mode .icon-btn img { filter: brightness(0) invert(1); }
 
         /* settings dropdown - simple panel */
@@ -214,7 +214,7 @@
         }
         .settings-item span { display: flex; align-items: center; gap: 10px; font-weight: 500; color: #000000; }
         body.dark-mode .settings-item span { color: #ffffff; }
-        .settings-item span img { width: 20px; height: 20px; filter: brightness(0); }
+        .settings-item span img { width: 18px; height: 18px; filter: brightness(0); }
         body.dark-mode .settings-item span img { filter: brightness(0) invert(1); }
 
         /* model select - nicer */
@@ -236,7 +236,7 @@
         .logout-btn:hover { background: #d0d0d0; }
         body.dark-mode .logout-btn { background: #2a2a2a; color: #ffffff; border-color: #5a5a5a; }
         .logout-btn:hover { background: #3a3a3a; }
-        .logout-btn img { width: 18px; height: 18px; filter: brightness(0); }
+        .logout-btn img { width: 16px; height: 16px; filter: brightness(0); }
         body.dark-mode .logout-btn img { filter: brightness(0) invert(1); }
 
         /* chat container */
@@ -265,12 +265,21 @@
         .user .message-meta { justify-content: flex-end; }
 
         .avatar {
-            width: 28px; height: 28px; border-radius: 28px;
+            width: 24px;
+            height: 24px;
+            border-radius: 24px;
             background: #d0d0d0;  /* grey background */
-            display: flex; align-items: center; justify-content: center;
-            color: #000000; font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000000;
+            font-size: 0.8rem;
         }
-        .avatar img { width: 16px; height: 16px; filter: brightness(0); }
+        .avatar img {
+            width: 14px;
+            height: 14px;
+            filter: brightness(0);
+        }
         body.dark-mode .avatar img { filter: brightness(0) invert(1); }
 
         .message-bubble {
@@ -306,21 +315,25 @@
         .message-bubble .MathJax { font-size: 1.1em; }
         .message-bubble mjx-container { margin: 4px 0; }
 
-        /* message actions (copy, regenerate, speaker) */
+        /* message actions (copy, regenerate) - TTS removed */
         .message-actions {
-            display: flex; gap: 12px; justify-content: flex-end; padding: 8px 8px 0;
+            display: flex; gap: 8px; justify-content: flex-end; padding: 6px 8px 0;
             opacity: 0; transition: opacity 0.15s;
         }
         .message-wrapper:hover .message-actions { opacity: 1; }
         .message-actions button {
-            background: transparent; border: 1px solid #c0c0c0; color: #1e1e1e; font-size: 0.85rem;
-            cursor: pointer; padding: 6px 12px; border-radius: 30px; display: inline-flex;
-            align-items: center; gap: 6px; transition: background 0.2s;
+            background: transparent; border: 1px solid #c0c0c0; color: #1e1e1e; font-size: 0.8rem;
+            cursor: pointer; padding: 4px 10px; border-radius: 30px; display: inline-flex;
+            align-items: center; gap: 4px; transition: background 0.2s;
         }
         .message-actions button:hover { background: #e0e0e0; }
         body.dark-mode .message-actions button { border-color: #5a5a5a; color: #dddddd; }
         body.dark-mode .message-actions button:hover { background: #3a3a3a; }
-        .message-actions button img { width: 16px; height: 16px; filter: brightness(0); }
+        .message-actions button img {
+            width: 14px;
+            height: 14px;
+            filter: brightness(0);
+        }
         body.dark-mode .message-actions button img { filter: brightness(0) invert(1); }
 
         /* three-dot loading animation for assistant streaming */
@@ -352,7 +365,7 @@
         }
 
         .input-row {
-            display: flex; gap: 12px; align-items: flex-end; background: #f5f5f5;
+            display: flex; gap: 8px; align-items: flex-end; background: #f5f5f5;
             border-radius: 40px; padding: 4px 4px 4px 16px; border: 1px solid #c0c0c0;
             transition: border-color 0.2s;
         }
@@ -372,32 +385,46 @@
         body.dark-mode .add-dropdown { background: #2a2a2a; border-color: #5a5a5a; }
         .add-dropdown.hidden { display: none; }
         .add-option {
-            background: none; border: none; padding: 10px 24px; display: flex; gap: 12px; align-items: center;
-            font-size: 1rem; cursor: pointer; border-radius: 40px; color: #000000; white-space: nowrap;
+            background: none; border: none; padding: 8px 20px; display: flex; gap: 8px; align-items: center;
+            font-size: 0.95rem; cursor: pointer; border-radius: 40px; color: #000000; white-space: nowrap;
         }
         .add-option:hover { background: #e0e0e0; }
         body.dark-mode .add-option { color: #ffffff; }
         body.dark-mode .add-option:hover { background: #3a3a3a; }
-        .add-option img { width: 20px; height: 20px; filter: brightness(0); }
+        .add-option img {
+            width: 16px;
+            height: 16px;
+            filter: brightness(0);
+        }
         body.dark-mode .add-option img { filter: brightness(0) invert(1); }
 
         .input-row textarea {
-            flex: 1; border: none; background: transparent; padding: 12px 0;
-            font-family: 'IBM Plex Sans'; font-size: 1rem; resize: none; max-height: 120px;
+            flex: 1; border: none; background: transparent; padding: 10px 0;
+            font-family: 'IBM Plex Sans'; font-size: 0.95rem; resize: none; max-height: 100px;
             outline: none; color: #000000;
         }
         body.dark-mode .input-row textarea { color: #f0f0f0; }
 
         .action-group { display: flex; gap: 4px; }
         .circle-btn {
-            width: 44px; height: 44px; border-radius: 44px; border: 1px solid #c0c0c0;
-            background: transparent; display: flex;
-            align-items: center; justify-content: center; cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 36px;
+            border: 1px solid #c0c0c0;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
             transition: background 0.2s;
         }
         .circle-btn:hover { background: #e0e0e0; }
         body.dark-mode .circle-btn:hover { background: #3a3a3a; }
-        .circle-btn img { width: 20px; height: 20px; filter: brightness(0); }
+        .circle-btn img {
+            width: 16px;
+            height: 16px;
+            filter: brightness(0);
+        }
         body.dark-mode .circle-btn img { filter: brightness(0) invert(1); }
         .circle-btn.stop-btn { border-color: #b0b0b0; }
 
@@ -406,13 +433,13 @@
             animation: fadeIn 0.2s;
         }
         #previewImg {
-            max-width: 100px; max-height: 100px; border-radius: 12px;
+            max-width: 80px; max-height: 80px; border-radius: 12px;
             border: 1px solid #b0b0b0; background: #f0f0f0;
         }
         #removeImageBtn {
             position: absolute; top: -8px; right: -8px; background: #4a4a4a;
-            color: white; border: none; border-radius: 50%; width: 24px; height: 24px;
-            font-size: 1rem; cursor: pointer; display: flex; align-items: center;
+            color: white; border: none; border-radius: 50%; width: 22px; height: 22px;
+            font-size: 0.9rem; cursor: pointer; display: flex; align-items: center;
             justify-content: center; border: 1px solid #888;
         }
 
@@ -429,7 +456,6 @@
         <h2>Atlas</h2>
         <p>The Super Study Helper</p>
         <button class="login-btn" id="loginBtn">
-            <!-- lock icon (same) but text changed to "Login" -->
             <img src="artificial-intelligence.png" alt="Atlas logo">
             Login
         </button>
@@ -439,7 +465,6 @@
     <div id="chatApp" class="chat-app hidden">
         <div class="top-bar">
             <div class="app-name">
-                <!-- ai icon (artificial-intelligence_10793325) replaced via svg (flaticon style) -->
                 <img src="artificial-intelligence.png" alt="Atlas">
                 <span>Atlas</span>
             </div>
@@ -474,7 +499,7 @@
         <div class="chat-container" id="chatContainer">
             <div class="message-wrapper assistant">
                 <div class="message-meta">
-                    <span class="avatar"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20 9V7c0-1.1-.9-2-2-2h-4c0-1.66-1.34-3-3-3S8 3.34 8 5H4c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h4c0 1.66 1.34 3 3 3s3-1.34 3-3h4c1.1 0 2-.9 2-2z' fill='%23000000'/%3E%3C/svg%3E"></span>
+                    <span class="avatar"><img src="artificial-intelligence.png" alt="assistant"></span>
                     <span class="timestamp" id="welcomeTime"></span>
                 </div>
                 <div class="message-bubble">I'm Atlas. I was developed by Akash Dutta!</div>
@@ -487,11 +512,11 @@
                 <!-- add button with dropdown -->
                 <div class="add-menu-container">
                     <button class="circle-btn" id="addBtn">
-                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000000'%3E%3Cpath d='M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z'/%3E%3C/svg%3E">
+                        <img src="add.png" alt="add">
                     </button>
                     <div class="add-dropdown hidden" id="addDropdown">
-                        <button class="add-option" id="cameraOption"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000000'%3E%3Cpath d='M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm9-3h-3.5l-2-2h-7l-2 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 14H3V5h4.05l2-2h5.9l2 2H21v12z'/%3E%3C/svg%3E"> Camera</button>
-                        <button class="add-option" id="imageOption"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000000'%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'/%3E%3C/svg%3E"> Image</button>
+                        <button class="add-option" id="cameraOption"><img src="photo-camera-interface-symbol-for-button.png" alt="camera"> Camera</button>
+                        <button class="add-option" id="imageOption"><img src="image.png" alt="image"> Image</button>
                     </div>
                 </div>
                 <input type="file" id="imageFileInput" accept="image/*" capture="environment" hidden />
@@ -499,10 +524,10 @@
                 <textarea id="userInput" placeholder="Ask Atlas..." rows="1"></textarea>
                 <div class="action-group">
                     <button class="circle-btn stop-btn hidden" id="stopBtn">
-                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000000'%3E%3Crect x='6' y='6' width='12' height='12' rx='1'/%3E%3C/svg%3E">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000000'%3E%3Crect x='6' y='6' width='12' height='12' rx='1'/%3E%3C/svg%3E" alt="stop">
                     </button>
                     <button class="circle-btn" id="sendBtn">
-                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000000'%3E%3Cpath d='M2.01 21L23 12 2.01 3 2 10l15 2-15 2z'/%3E%3C/svg%3E">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000000'%3E%3Cpath d='M2.01 21L23 12 2.01 3 2 10l15 2-15 2z'/%3E%3C/svg%3E" alt="send">
                     </button>
                 </div>
             </div>
@@ -609,10 +634,10 @@
 
                 const meta = document.createElement('div');
                 meta.className = 'message-meta';
-                // user avatar: user icon (flaticon style)
+                // user avatar: user.png, assistant avatar: artificial-intelligence.png
                 const avatarIcon = msg.role === 'user' 
-                    ? '<img src="data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\'%3E%3Cpath d=\'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z\' fill=\'%23000000\'/%3E%3C/svg%3E">'
-                    : '<img src="data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\'%3E%3Cpath d=\'M20 9V7c0-1.1-.9-2-2-2h-4c0-1.66-1.34-3-3-3S8 3.34 8 5H4c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h4c0 1.66 1.34 3 3 3s3-1.34 3-3h4c1.1 0 2-.9 2-2z\' fill=\'%23000000\'/%3E%3C/svg%3E">';
+                    ? '<img src="user.png" alt="user">'
+                    : '<img src="artificial-intelligence.png" alt="assistant">';
                 meta.innerHTML = `
                     <span class="avatar">${avatarIcon}</span>
                     <span class="timestamp">${formatTime12h()}</span>
@@ -630,13 +655,12 @@
                 const actionsDiv = document.createElement('div');
                 actionsDiv.className = 'message-actions';
                 
-                // Copy + speaker (always) + regenerate for assistant
+                // Copy only (TTS removed) + regenerate for assistant
                 actionsDiv.innerHTML = `
-                    <button class="copy-msg"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z' fill='%23000000'/%3E%3C/svg%3E> Copy</button>
-                    <button class="speaker-msg"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z' fill='%23000000'/%3E%3C/svg%3E> Speak</button>
+                    <button class="copy-msg"><img src="copy.png" alt="copy"> Copy</button>
                 `;
                 if (msg.role === 'assistant') {
-                    actionsDiv.innerHTML += `<button class="regenerate-msg"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z' fill='%23000000'/%3E%3C/svg%3E> Regenerate</button>`;
+                    actionsDiv.innerHTML += `<button class="regenerate-msg"><img src="recover.png" alt="regenerate"> Regenerate</button>`;
                 }
                 wrapper.appendChild(actionsDiv);
                 chatContainer.appendChild(wrapper);
@@ -663,7 +687,7 @@
                 wrapper.dataset.messageId = assistantId;
                 const meta = document.createElement('div');
                 meta.className = 'message-meta';
-                meta.innerHTML = `<span class="avatar"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20 9V7c0-1.1-.9-2-2-2h-4c0-1.66-1.34-3-3-3S8 3.34 8 5H4c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h4c0 1.66 1.34 3 3 3s3-1.34 3-3h4c1.1 0 2-.9 2-2z' fill='%23000000'/%3E%3C/svg%3E"></span><span class="timestamp">${formatTime12h()}</span>`;
+                meta.innerHTML = `<span class="avatar"><img src="artificial-intelligence.png" alt="assistant"></span><span class="timestamp">${formatTime12h()}</span>`;
                 wrapper.appendChild(meta);
                 const bubble = document.createElement('div');
                 bubble.className = 'message-bubble';
@@ -676,7 +700,7 @@
 
                 const actionsDiv = document.createElement('div');
                 actionsDiv.className = 'message-actions';
-                actionsDiv.innerHTML = `<button class="copy-msg"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z' fill='%23000000'/%3E%3C/svg%3E> Copy</button><button class="speaker-msg"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z' fill='%23000000'/%3E%3C/svg%3E> Speak</button><button class="regenerate-msg"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z' fill='%23000000'/%3E%3C/svg%3E> Regenerate</button>`;
+                actionsDiv.innerHTML = `<button class="copy-msg"><img src="copy.png" alt="copy"> Copy</button><button class="regenerate-msg"><img src="recover.png" alt="regenerate"> Regenerate</button>`;
                 wrapper.appendChild(actionsDiv);
                 chatContainer.appendChild(wrapper);
                 scrollToBottom();
@@ -801,10 +825,6 @@
                     const orig = btn.innerHTML;
                     btn.innerHTML = '<img src="data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2300aa00\'%3E%3Cpath d=\'M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z\'/%3E%3C/svg%3E> Copied';
                     setTimeout(() => btn.innerHTML = orig, 1200);
-                }
-                if (btn.classList.contains('speaker-msg')) {
-                    const utterance = new SpeechSynthesisUtterance(msg.content);
-                    speechSynthesis.speak(utterance);
                 }
                 if (btn.classList.contains('regenerate-msg') && msg.role === 'assistant') {
                     const idx = messages.findIndex(m => m.id === msgId);
