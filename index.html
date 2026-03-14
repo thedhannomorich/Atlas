@@ -981,399 +981,510 @@
       </div>
     </div>
     <script>
-      (function() {
-        // DOM elements
-        const loginScreen = document.getElementById('loginScreen');
-        const chatApp = document.getElementById('chatApp');
-        const loginBtn = document.getElementById('loginBtn');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const chatContainer = document.getElementById('chatContainer');
-        const userInput = document.getElementById('userInput');
-        const sendBtn = document.getElementById('sendBtn');
-        const stopBtn = document.getElementById('stopBtn');
-        const themeToggle = document.getElementById('themeToggle');
-        const settingsToggle = document.getElementById('settingsToggle');
-        const settingsPanel = document.getElementById('settingsPanel');
-        const modelSelect = document.getElementById('modelSelect');
-        const addBtn = document.getElementById('addBtn');
-        const addDropdown = document.getElementById('addDropdown');
-        const cameraOption = document.getElementById('cameraOption');
-        const imageOption = document.getElementById('imageOption');
-        const cameraFileInput = document.getElementById('cameraFileInput');
-        const imageFileInput = document.getElementById('imageFileInput');
-        const attachedPreview = document.getElementById('attachedPreview');
-        const previewImg = document.getElementById('previewImg');
-        const removeImageBtn = document.getElementById('removeImageBtn');
-        // state
-        let isAuthenticated = false;
-        let isStreaming = false;
-        let abortController = null;
-        let messages = [];
-        let attachedImageBase64 = null;
-        // helpers
-        const uid = () => Date.now() + '-' + Math.random().toString(36).substring(2);
-        const formatTime12h = () => {
-          const d = new Date();
-          let hours = d.getHours();
-          const minutes = d.getMinutes().toString().padStart(2, '0');
-          const ampm = hours >= 12 ? 'PM' : 'AM';
-          hours = hours % 12 || 12;
-          return `${hours}:${minutes} ${ampm}`;
-        };
-        document.getElementById('welcomeTime').innerText = formatTime12h();
-        const isPuterReady = () => typeof puter !== 'undefined' && puter.ai && puter.auth;
+  (function() {
+    // DOM elements
+    const loginScreen = document.getElementById('loginScreen');
+    const chatApp = document.getElementById('chatApp');
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const chatContainer = document.getElementById('chatContainer');
+    const userInput = document.getElementById('userInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const themeToggle = document.getElementById('themeToggle');
+    const settingsToggle = document.getElementById('settingsToggle');
+    const settingsPanel = document.getElementById('settingsPanel');
+    const modelSelect = document.getElementById('modelSelect');
+    const addBtn = document.getElementById('addBtn');
+    const addDropdown = document.getElementById('addDropdown');
+    const cameraOption = document.getElementById('cameraOption');
+    const imageOption = document.getElementById('imageOption');
+    const cameraFileInput = document.getElementById('cameraFileInput');
+    const imageFileInput = document.getElementById('imageFileInput');
+    const attachedPreview = document.getElementById('attachedPreview');
+    const previewImg = document.getElementById('previewImg');
+    const removeImageBtn = document.getElementById('removeImageBtn');
+    
+    // state
+    let isAuthenticated = false;
+    let isStreaming = false;
+    let abortController = null;
+    let messages = [];
+    let attachedImageBase64 = null;
+    
+    // helpers
+    const uid = () => Date.now() + '-' + Math.random().toString(36).substring(2);
+    const formatTime12h = () => {
+      const d = new Date();
+      let hours = d.getHours();
+      const minutes = d.getMinutes().toString().padStart(2, '0');
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12 || 12;
+      return `${hours}:${minutes} ${ampm}`;
+    };
+    
+    document.getElementById('welcomeTime').innerText = formatTime12h();
+    
+    const isPuterReady = () => typeof puter !== 'undefined' && puter.ai && puter.auth;
 
-        function renderMath() {
-          if (window.MathJax && window.MathJax.typesetPromise) {
-            window.MathJax.typesetPromise(Array.from(document.querySelectorAll('.message-bubble'))).catch(err => console.log('MathJax error:', err));
-          }
+    function renderMath() {
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise(Array.from(document.querySelectorAll('.message-bubble'))).catch(err => console.log('MathJax error:', err));
+      }
+    }
+    
+    // Improved authentication check
+    async function checkAuth() {
+      if (!isPuterReady()) {
+        return false;
+      }
+      
+      try {
+        // Try to get the current user
+        const user = await puter.auth.getUser();
+        
+        if (user) {
+          // Test if we can actually make an API call
+          const test = await puter.ai.chat('test', {
+            model: 'gpt-4.1-nano',
+            stream: false
+          }).catch(() => null);
+          
+          return !!test;
         }
-        async function initialize() {
-          if (!isPuterReady()) {
-            setTimeout(initialize, 80);
-            return;
-          }
-          try {
-            const test = await puter.ai.chat('test', {
-              model: 'gpt-4.1-nano',
-              stream: false
-            }).catch(() => null);
-            if (test) {
-              isAuthenticated = true;
-              showChatApp();
-            } else {
-              showLoginScreen();
-            }
-          } catch {
-            showLoginScreen();
-          }
+        return false;
+      } catch (error) {
+        console.log('Auth check failed:', error);
+        return false;
+      }
+    }
+    
+    // Force new authentication
+    async function signIn() {
+      try {
+        // First, try to sign out any existing session
+        try {
+          await puter.auth.signOut();
+        } catch (e) {
+          // Ignore signOut errors
         }
+        
+        // Small delay to ensure signOut completes
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // Sign in fresh
+        const user = await puter.auth.signIn();
+        
+        if (user) {
+          isAuthenticated = true;
+          showChatApp();
+        } else {
+          showLoginScreen();
+        }
+      } catch (error) {
+        console.error('Sign in failed:', error);
+        alert('Login failed. Please try again.');
+        showLoginScreen();
+      }
+    }
+    
+    async function initialize() {
+      if (!isPuterReady()) {
+        setTimeout(initialize, 80);
+        return;
+      }
+      
+      const authenticated = await checkAuth();
+      
+      if (authenticated) {
+        isAuthenticated = true;
+        showChatApp();
+      } else {
+        showLoginScreen();
+      }
+    }
 
-        function showChatApp() {
-          loginScreen.classList.add('hidden');
-          chatApp.classList.remove('hidden');
-          userInput.disabled = false;
-          sendBtn.disabled = false;
-          if (messages.length === 0) {
-            chatContainer.innerHTML = '';
-            addMessage('assistant', 'I\'m Atlas. I was developed by Akash Dutta!');
-          } else refreshMessages();
-        }
+    function showChatApp() {
+      loginScreen.classList.add('hidden');
+      chatApp.classList.remove('hidden');
+      userInput.disabled = false;
+      sendBtn.disabled = false;
+      if (messages.length === 0) {
+        chatContainer.innerHTML = '';
+        addMessage('assistant', 'I\'m Atlas. I was developed by Akash Dutta!');
+      } else {
+        refreshMessages();
+      }
+    }
 
-        function showLoginScreen() {
-          loginScreen.classList.remove('hidden');
-          chatApp.classList.add('hidden');
-          isAuthenticated = false;
-        }
+    function showLoginScreen() {
+      loginScreen.classList.remove('hidden');
+      chatApp.classList.add('hidden');
+      isAuthenticated = false;
+    }
 
-        function addMessage(role, content, status = 'complete', imageBase64 = null) {
-          const msg = {
-            id: uid(),
-            role,
-            content,
-            timestamp: new Date().toISOString(),
-            status,
-            image: imageBase64
-          };
-          messages.push(msg);
-          renderMessage(msg);
-          scrollToBottom();
-          renderMath();
-          return msg.id;
-        }
+    function addMessage(role, content, status = 'complete', imageBase64 = null) {
+      const msg = {
+        id: uid(),
+        role,
+        content,
+        timestamp: new Date().toISOString(),
+        status,
+        image: imageBase64
+      };
+      messages.push(msg);
+      renderMessage(msg);
+      scrollToBottom();
+      renderMath();
+      return msg.id;
+    }
 
-        function renderMessage(msg) {
-          const wrapper = document.createElement('div');
-          wrapper.className = `message-wrapper ${msg.role}`;
-          wrapper.dataset.messageId = msg.id;
-          const meta = document.createElement('div');
-          meta.className = 'message-meta';
-          const avatarIcon = msg.role === 'user' ? ' < i class = "fas fa-user" > < /i>' : ' < i class = "fas fa-robot" > < /i>';
-          meta.innerHTML = `
-                    
-											<span class="avatar">${avatarIcon}</span>
-											<span class="timestamp">${formatTime12h()}</span>
-                `;
-          wrapper.appendChild(meta);
-          const bubble = document.createElement('div');
-          bubble.className = 'message-bubble';
-          let innerHtml = '';
-          if (msg.image) innerHtml += `
-											<img src="${msg.image}" class="image-preview">`;
-          innerHtml += marked.parse(msg.content || '');
-          bubble.innerHTML = innerHtml;
-          wrapper.appendChild(bubble);
-          const actionsDiv = document.createElement('div');
-          actionsDiv.className = 'message-actions';
-          actionsDiv.innerHTML = `
-                    
-												<button class="copy-msg">
-													<i class="fas fa-copy"></i> Copy
-												</button>
-												<button class="speaker-msg">
-													<i class="fas fa-volume-up"></i> Speak
-												</button>
-                `;
-          if (msg.role === 'assistant') {
-            actionsDiv.innerHTML += `
-												<button class="regenerate-msg">
-													<i class="fas fa-undo-alt"></i> Regenerate
-												</button>`;
-          }
-          wrapper.appendChild(actionsDiv);
-          chatContainer.appendChild(wrapper);
-        }
+    function renderMessage(msg) {
+      const wrapper = document.createElement('div');
+      wrapper.className = `message-wrapper ${msg.role}`;
+      wrapper.dataset.messageId = msg.id;
+      
+      const meta = document.createElement('div');
+      meta.className = 'message-meta';
+      const avatarIcon = msg.role === 'user' ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>';
+      meta.innerHTML = `
+        <span class="avatar">${avatarIcon}</span>
+        <span class="timestamp">${formatTime12h()}</span>
+      `;
+      wrapper.appendChild(meta);
+      
+      const bubble = document.createElement('div');
+      bubble.className = 'message-bubble';
+      let innerHtml = '';
+      if (msg.image) innerHtml += `<img src="${msg.image}" class="image-preview">`;
+      innerHtml += marked.parse(msg.content || '');
+      bubble.innerHTML = innerHtml;
+      wrapper.appendChild(bubble);
+      
+      const actionsDiv = document.createElement('div');
+      actionsDiv.className = 'message-actions';
+      actionsDiv.innerHTML = `
+        <button class="copy-msg">
+          <i class="fas fa-copy"></i> Copy
+        </button>
+        <button class="speaker-msg">
+          <i class="fas fa-volume-up"></i> Speak
+        </button>
+      `;
+      if (msg.role === 'assistant') {
+        actionsDiv.innerHTML += `
+          <button class="regenerate-msg">
+            <i class="fas fa-undo-alt"></i> Regenerate
+          </button>`;
+      }
+      wrapper.appendChild(actionsDiv);
+      
+      chatContainer.appendChild(wrapper);
+    }
 
-        function refreshMessages() {
-          chatContainer.innerHTML = '';
-          messages.forEach(m => renderMessage(m));
-          scrollToBottom();
-          renderMath();
-        }
+    function refreshMessages() {
+      chatContainer.innerHTML = '';
+      messages.forEach(m => renderMessage(m));
+      scrollToBottom();
+      renderMath();
+    }
 
-        function scrollToBottom() {
-          chatContainer.scrollTo({
-            top: chatContainer.scrollHeight,
-            behavior: 'smooth'
+    function scrollToBottom() {
+      chatContainer.scrollTo({
+        top: chatContainer.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+    
+    async function sendMessage(text, imageBase64 = null) {
+      if (!text.trim() && !imageBase64) return;
+      
+      // Re-check authentication before sending
+      const isAuth = await checkAuth();
+      if (!isAuth) {
+        isAuthenticated = false;
+        showLoginScreen();
+        return;
+      }
+      
+      if (isStreaming) return;
+      
+      addMessage('user', text || '📷 Image', 'complete', imageBase64);
+      
+      const assistantId = uid();
+      const wrapper = document.createElement('div');
+      wrapper.className = 'message-wrapper assistant';
+      wrapper.dataset.messageId = assistantId;
+      
+      const meta = document.createElement('div');
+      meta.className = 'message-meta';
+      meta.innerHTML = `
+        <span class="avatar">
+          <i class="fas fa-robot"></i>
+        </span>
+        <span class="timestamp">${formatTime12h()}</span>`;
+      wrapper.appendChild(meta);
+      
+      const bubble = document.createElement('div');
+      bubble.className = 'message-bubble';
+      const indicator = document.createElement('span');
+      indicator.className = 'typing-indicator';
+      indicator.innerHTML = '<span></span><span></span><span></span>';
+      bubble.appendChild(indicator);
+      wrapper.appendChild(bubble);
+      
+      const actionsDiv = document.createElement('div');
+      actionsDiv.className = 'message-actions';
+      actionsDiv.innerHTML = `
+        <button class="copy-msg">
+          <i class="fas fa-copy"></i> Copy
+        </button>
+        <button class="speaker-msg">
+          <i class="fas fa-volume-up"></i> Speak
+        </button>
+        <button class="regenerate-msg">
+          <i class="fas fa-undo-alt"></i> Regenerate
+        </button>`;
+      wrapper.appendChild(actionsDiv);
+      
+      chatContainer.appendChild(wrapper);
+      scrollToBottom();
+      
+      const assistantMsg = {
+        id: assistantId,
+        role: 'assistant',
+        content: '',
+        timestamp: new Date().toISOString(),
+        status: 'streaming',
+        image: null
+      };
+      messages.push(assistantMsg);
+      
+      isStreaming = true;
+      sendBtn.disabled = true;
+      stopBtn.classList.remove('hidden');
+      abortController = new AbortController();
+      
+      try {
+        let response;
+        if (imageBase64) {
+          response = await puter.ai.chat(text.trim() || 'Describe this image', imageBase64, {
+            model: modelSelect.value,
+            stream: true,
+            signal: abortController.signal
+          });
+        } else {
+          const conversationForAI = messages.filter(m => m.id !== assistantId).map(m => ({
+            role: m.role,
+            content: m.content
+          }));
+          response = await puter.ai.chat(conversationForAI, {
+            model: modelSelect.value,
+            stream: true,
+            signal: abortController.signal
           });
         }
-        async function sendMessage(text, imageBase64 = null) {
-          if (!text.trim() && !imageBase64) return;
-          if (!isAuthenticated) {
-            alert('Please sign in first');
-            return;
-          }
-          if (isStreaming) return;
-          addMessage('user', text || '📷 Image', 'complete', imageBase64);
-          const assistantId = uid();
-          const wrapper = document.createElement('div');
-          wrapper.className = 'message-wrapper assistant';
-          wrapper.dataset.messageId = assistantId;
-          const meta = document.createElement('div');
-          meta.className = 'message-meta';
-          meta.innerHTML = `
-												<span class="avatar">
-													<i class="fas fa-robot"></i>
-												</span>
-												<span class="timestamp">${formatTime12h()}</span>`;
-          wrapper.appendChild(meta);
-          const bubble = document.createElement('div');
-          bubble.className = 'message-bubble';
-          const indicator = document.createElement('span');
-          indicator.className = 'typing-indicator';
-          indicator.innerHTML = ' < span > < /span> < span > < /span> < span > < /span>';
-          bubble.appendChild(indicator);
-          wrapper.appendChild(bubble);
-          const actionsDiv = document.createElement('div');
-          actionsDiv.className = 'message-actions';
-          actionsDiv.innerHTML = `
-												<button class="copy-msg">
-													<i class="fas fa-copy"></i> Copy
-												</button>
-												<button class="speaker-msg">
-													<i class="fas fa-volume-up"></i> Speak
-												</button>
-												<button class="regenerate-msg">
-													<i class="fas fa-undo-alt"></i> Regenerate
-												</button>`;
-          wrapper.appendChild(actionsDiv);
-          chatContainer.appendChild(wrapper);
-          scrollToBottom();
-          const assistantMsg = {
-            id: assistantId,
-            role: 'assistant',
-            content: '',
-            timestamp: new Date().toISOString(),
-            status: 'streaming',
-            image: null
-          };
-          messages.push(assistantMsg);
-          isStreaming = true;
-          sendBtn.disabled = true;
-          stopBtn.classList.remove('hidden');
-          abortController = new AbortController();
-          try {
-            let response;
-            if (imageBase64) {
-              response = await puter.ai.chat(text.trim() || 'Describe this image', imageBase64, {
-                model: modelSelect.value,
-                stream: true,
-                signal: abortController.signal
-              });
-            } else {
-              const conversationForAI = messages.filter(m => m.id !== assistantId).map(m => ({
-                role: m.role,
-                content: m.content
-              }));
-              response = await puter.ai.chat(conversationForAI, {
-                model: modelSelect.value,
-                stream: true,
-                signal: abortController.signal
-              });
-            }
-            let fullText = '';
-            bubble.innerHTML = ''; // clear indicator
-            for await (const part of response) {
-              if (abortController.signal.aborted) break;
-              if (part?.text) {
-                fullText += part.text;
-                bubble.innerHTML = marked.parse(fullText);
-                scrollToBottom();
-                renderMath();
-              }
-            }
-            if (!abortController.signal.aborted) {
-              assistantMsg.content = fullText;
-            } else {
-              bubble.innerHTML = marked.parse(fullText + ' ⏸️');
-              assistantMsg.content = fullText + ' ⏸️';
-              renderMath();
-            }
-          } catch (err) {
-            if (err.message?.includes('authenticate')) {
-              isAuthenticated = false;
-              showLoginScreen();
-            } else {
-              bubble.innerHTML = 'Error: ' + (err.message || 'unknown');
-            }
-          } finally {
-            isStreaming = false;
-            sendBtn.disabled = false;
-            stopBtn.classList.add('hidden');
-            abortController = null;
+        
+        let fullText = '';
+        bubble.innerHTML = ''; // clear indicator
+        
+        for await (const part of response) {
+          if (abortController.signal.aborted) break;
+          if (part?.text) {
+            fullText += part.text;
+            bubble.innerHTML = marked.parse(fullText);
+            scrollToBottom();
+            renderMath();
           }
         }
-        // ----- event listeners -----
-        addBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          addDropdown.classList.toggle('hidden');
-        });
-        document.addEventListener('click', (e) => {
-          if (!addBtn.contains(e.target) && !addDropdown.contains(e.target)) {
-            addDropdown.classList.add('hidden');
-          }
-        });
-        cameraOption.addEventListener('click', () => {
-          cameraFileInput.click();
-          addDropdown.classList.add('hidden');
-        });
-        imageOption.addEventListener('click', () => {
-          imageFileInput.click();
-          addDropdown.classList.add('hidden');
-        });
-
-        function handleImageSelected(fileInput) {
-          const file = fileInput.files[0];
-          if (!file) return;
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            attachedImageBase64 = e.target.result;
-            previewImg.src = attachedImageBase64;
-            attachedPreview.style.display = 'block';
-          };
-          reader.readAsDataURL(file);
+        
+        if (!abortController.signal.aborted) {
+          assistantMsg.content = fullText;
+        } else {
+          bubble.innerHTML = marked.parse(fullText + ' ⏸️');
+          assistantMsg.content = fullText + ' ⏸️';
+          renderMath();
         }
-        cameraFileInput.addEventListener('change', () => handleImageSelected(cameraFileInput));
-        imageFileInput.addEventListener('change', () => handleImageSelected(imageFileInput));
-        removeImageBtn.addEventListener('click', () => {
-          attachedImageBase64 = null;
-          cameraFileInput.value = '';
-          imageFileInput.value = '';
-          attachedPreview.style.display = 'none';
-        });
-        sendBtn.addEventListener('click', () => {
-          const text = userInput.value.trim();
-          sendMessage(text, attachedImageBase64);
-          userInput.value = '';
-          userInput.style.height = 'auto';
-          attachedImageBase64 = null;
-          cameraFileInput.value = '';
-          imageFileInput.value = '';
-          attachedPreview.style.display = 'none';
-        });
-        userInput.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            sendBtn.click();
-          }
-        });
-        userInput.addEventListener('input', function() {
-          this.style.height = 'auto';
-          this.style.height = this.scrollHeight + 'px';
-        });
-        stopBtn.addEventListener('click', () => {
-          if (abortController) abortController.abort();
-          isStreaming = false;
-          sendBtn.disabled = false;
-          stopBtn.classList.add('hidden');
-        });
-        themeToggle.addEventListener('click', () => {
-          document.body.classList.toggle('dark-mode');
-          const dark = document.body.classList.contains('dark-mode');
-          localStorage.setItem('atlas-theme', dark ? 'dark' : 'light');
-        });
-        if (localStorage.getItem('atlas-theme') === 'dark') {
-          document.body.classList.add('dark-mode');
-        }
-        settingsToggle.addEventListener('click', (e) => {
-          e.stopPropagation();
-          settingsPanel.classList.toggle('show');
-        });
-        document.addEventListener('click', (e) => {
-          if (!settingsPanel.contains(e.target) && !settingsToggle.contains(e.target)) settingsPanel.classList.remove('show');
-        });
-        chatContainer.addEventListener('click', async (e) => {
-          const btn = e.target.closest('button');
-          if (!btn) return;
-          const wrapper = btn.closest('.message-wrapper');
-          if (!wrapper) return;
-          const msgId = wrapper.dataset.messageId;
-          const msg = messages.find(m => m.id === msgId);
-          if (!msg) return;
-          if (btn.classList.contains('copy-msg')) {
-            await navigator.clipboard.writeText(msg.content);
-            const orig = btn.innerHTML;
-            btn.innerHTML = ' < i class = "fas fa-check"
-            style = "color:#00aa00" > < /i> Copied';
-            setTimeout(() => btn.innerHTML = orig, 1200);
-          }
-          if (btn.classList.contains('speaker-msg')) {
-            const utterance = new SpeechSynthesisUtterance(msg.content);
-            speechSynthesis.speak(utterance);
-          }
-          if (btn.classList.contains('regenerate-msg') && msg.role === 'assistant') {
-            const idx = messages.findIndex(m => m.id === msgId);
-            let userMsg = null,
-              userImage = null;
-            for (let i = idx - 1; i >= 0; i--) {
-              if (messages[i].role === 'user') {
-                userMsg = messages[i].content;
-                userImage = messages[i].image || null;
-                break;
-              }
-            }
-            if (userMsg !== null) {
-              messages = messages.slice(0, idx);
-              refreshMessages();
-              await sendMessage(userMsg, userImage);
-            }
-          }
-        });
-        logoutBtn.addEventListener('click', async () => {
-          try {
-            await puter.auth.signOut();
-          } catch (e) {}
+      } catch (err) {
+        if (err.message?.includes('authenticate') || err.message?.includes('auth')) {
           isAuthenticated = false;
-          messages = [];
-          attachedImageBase64 = null;
-          attachedPreview.style.display = 'none';
-          cameraFileInput.value = '';
-          imageFileInput.value = '';
           showLoginScreen();
-          settingsPanel.classList.remove('show');
-        });
-        initialize();
-      })();
-    </script>
+        } else {
+          bubble.innerHTML = 'Error: ' + (err.message || 'unknown');
+        }
+      } finally {
+        isStreaming = false;
+        sendBtn.disabled = false;
+        stopBtn.classList.add('hidden');
+        abortController = null;
+      }
+    }
+    
+    // ----- event listeners -----
+    loginBtn.addEventListener('click', signIn);
+    
+    addBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      addDropdown.classList.toggle('hidden');
+    });
+    
+    document.addEventListener('click', (e) => {
+      if (!addBtn.contains(e.target) && !addDropdown.contains(e.target)) {
+        addDropdown.classList.add('hidden');
+      }
+    });
+    
+    cameraOption.addEventListener('click', () => {
+      cameraFileInput.click();
+      addDropdown.classList.add('hidden');
+    });
+    
+    imageOption.addEventListener('click', () => {
+      imageFileInput.click();
+      addDropdown.classList.add('hidden');
+    });
+
+    function handleImageSelected(fileInput) {
+      const file = fileInput.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        attachedImageBase64 = e.target.result;
+        previewImg.src = attachedImageBase64;
+        attachedPreview.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+    
+    cameraFileInput.addEventListener('change', () => handleImageSelected(cameraFileInput));
+    imageFileInput.addEventListener('change', () => handleImageSelected(imageFileInput));
+    
+    removeImageBtn.addEventListener('click', () => {
+      attachedImageBase64 = null;
+      cameraFileInput.value = '';
+      imageFileInput.value = '';
+      attachedPreview.style.display = 'none';
+    });
+    
+    sendBtn.addEventListener('click', () => {
+      const text = userInput.value.trim();
+      sendMessage(text, attachedImageBase64);
+      userInput.value = '';
+      userInput.style.height = 'auto';
+      attachedImageBase64 = null;
+      cameraFileInput.value = '';
+      imageFileInput.value = '';
+      attachedPreview.style.display = 'none';
+    });
+    
+    userInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendBtn.click();
+      }
+    });
+    
+    userInput.addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = this.scrollHeight + 'px';
+    });
+    
+    stopBtn.addEventListener('click', () => {
+      if (abortController) abortController.abort();
+      isStreaming = false;
+      sendBtn.disabled = false;
+      stopBtn.classList.add('hidden');
+    });
+    
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      const dark = document.body.classList.contains('dark-mode');
+      localStorage.setItem('atlas-theme', dark ? 'dark' : 'light');
+    });
+    
+    if (localStorage.getItem('atlas-theme') === 'dark') {
+      document.body.classList.add('dark-mode');
+    }
+    
+    settingsToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      settingsPanel.classList.toggle('show');
+    });
+    
+    document.addEventListener('click', (e) => {
+      if (!settingsPanel.contains(e.target) && !settingsToggle.contains(e.target)) {
+        settingsPanel.classList.remove('show');
+      }
+    });
+    
+    chatContainer.addEventListener('click', async (e) => {
+      const btn = e.target.closest('button');
+      if (!btn) return;
+      
+      const wrapper = btn.closest('.message-wrapper');
+      if (!wrapper) return;
+      
+      const msgId = wrapper.dataset.messageId;
+      const msg = messages.find(m => m.id === msgId);
+      if (!msg) return;
+      
+      if (btn.classList.contains('copy-msg')) {
+        await navigator.clipboard.writeText(msg.content);
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check" style="color:#00aa00"></i> Copied';
+        setTimeout(() => btn.innerHTML = orig, 1200);
+      }
+      
+      if (btn.classList.contains('speaker-msg')) {
+        const utterance = new SpeechSynthesisUtterance(msg.content);
+        speechSynthesis.speak(utterance);
+      }
+      
+      if (btn.classList.contains('regenerate-msg') && msg.role === 'assistant') {
+        const idx = messages.findIndex(m => m.id === msgId);
+        let userMsg = null,
+            userImage = null;
+        for (let i = idx - 1; i >= 0; i--) {
+          if (messages[i].role === 'user') {
+            userMsg = messages[i].content;
+            userImage = messages[i].image || null;
+            break;
+          }
+        }
+        if (userMsg !== null) {
+          messages = messages.slice(0, idx);
+          refreshMessages();
+          await sendMessage(userMsg, userImage);
+        }
+      }
+    });
+    
+    logoutBtn.addEventListener('click', async () => {
+      try {
+        await puter.auth.signOut();
+      } catch (e) {
+        console.log('Sign out error:', e);
+      }
+      
+      // Clear all state
+      isAuthenticated = false;
+      messages = [];
+      attachedImageBase64 = null;
+      attachedPreview.style.display = 'none';
+      cameraFileInput.value = '';
+      imageFileInput.value = '';
+      
+      // Clear chat container
+      chatContainer.innerHTML = '';
+      
+      // Show login screen
+      showLoginScreen();
+      settingsPanel.classList.remove('show');
+    });
+    
+    // Initialize the app
+    initialize();
+  })();
+</script>
   </body>
 </html>
