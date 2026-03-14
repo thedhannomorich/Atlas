@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atlas</title>
-    <!-- Metropolis & IBM Plex Sans (keep for structure, but we'll use only b/w weights) -->
+    <title>Atlas · study helper</title>
+    <!-- Font Awesome 6 (free) for all icons – sharp, modern, no external images needed -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Metropolis & IBM Plex Sans (keep for structure) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Metropolis:wght@500;600;700&display=swap" rel="stylesheet">
-    <!-- MathJax config: enable $...$ and $$...$$ BEFORE loading MathJax -->
+    <!-- MathJax config: enable $...$ and $$...$$ -->
     <script>
         window.MathJax = {
             tex: {
@@ -28,7 +30,7 @@
 
         body {
             font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #f5f5f7;  /* light grey */
+            background: #f5f5f7;
             height: 100vh;
             display: flex;
             align-items: center;
@@ -61,22 +63,19 @@
             border: 1px solid #d0d0d0;
             margin: 20px;
         }
-
         body.dark-mode .login-screen {
             background: #1e1e1e;
             border-color: #3a3a3a;
         }
-
         .login-screen h2 {
             font-size: 2.5rem;
             font-weight: 700;
-            color: #000000;      /* pure black */
+            color: #000000;
             margin-bottom: 8px;
         }
         body.dark-mode .login-screen h2 {
             color: #ffffff;
         }
-
         .login-screen p {
             color: #5a5a5a;
             margin-bottom: 32px;
@@ -85,9 +84,8 @@
         body.dark-mode .login-screen p {
             color: #a8a8a8;
         }
-
         .login-btn {
-            background: #000000;   /* pure black button */
+            background: #000000;
             border: none;
             color: white;
             font-size: 1rem;
@@ -110,13 +108,12 @@
         .login-btn:active {
             transform: scale(0.99);
         }
-        .login-btn img {
-            width: 18px;
-            height: 18px;
-            filter: brightness(0) invert(1); /* white icon */
+        .login-btn i {
+            font-size: 1.3rem;
+            color: white;
         }
 
-        /* ----- MAIN CHAT APP (no shadows, b/w/grey) ----- */
+        /* ----- MAIN CHAT APP (no shadows, crisp borders) ----- */
         .chat-app {
             width: 100%;
             max-width: 1000px;
@@ -134,10 +131,9 @@
             background: #1e1e1e;
             border-color: #3a3a3a;
         }
-
         .hidden { display: none !important; }
 
-        /* top bar - no blur, crisp borders */
+        /* top bar */
         .top-bar {
             padding: 16px 24px;
             border-bottom: 1px solid #d0d0d0;
@@ -150,19 +146,17 @@
             border-bottom: 1px solid #3a3a3a;
             background: #1e1e1e;
         }
-
         .app-name {
             display: flex;
             align-items: center;
             gap: 12px;
         }
-        .app-name img {
-            width: 28px;
-            height: 28px;
-            filter: brightness(0); /* black icon */
+        .app-name i {
+            font-size: 2rem;
+            color: #000000;
         }
-        body.dark-mode .app-name img {
-            filter: brightness(0) invert(1); /* white icon */
+        body.dark-mode .app-name i {
+            color: #ffffff;
         }
         .app-name span {
             font-size: 1.5rem;
@@ -177,22 +171,23 @@
         .icon-btn {
             background: transparent;
             border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 36px;
+            width: 40px;
+            height: 40px;
+            border-radius: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: background 0.2s;
             color: #3a3a3a;
+            font-size: 1.3rem;
         }
         .icon-btn:hover { background: #e0e0e0; }
         body.dark-mode .icon-btn:hover { background: #3a3a3a; }
-        .icon-btn img { width: 18px; height: 18px; filter: brightness(0); }
-        body.dark-mode .icon-btn img { filter: brightness(0) invert(1); }
+        .icon-btn i { color: #000000; }
+        body.dark-mode .icon-btn i { color: #ffffff; }
 
-        /* settings dropdown - simple panel */
+        /* settings dropdown */
         .settings-dropdown {
             position: absolute; top: 80px; right: 24px; width: 280px;
             background: #ffffff; 
@@ -214,10 +209,9 @@
         }
         .settings-item span { display: flex; align-items: center; gap: 10px; font-weight: 500; color: #000000; }
         body.dark-mode .settings-item span { color: #ffffff; }
-        .settings-item span img { width: 18px; height: 18px; filter: brightness(0); }
-        body.dark-mode .settings-item span img { filter: brightness(0) invert(1); }
+        .settings-item i { font-size: 1.2rem; width: 1.6rem; color: #000000; }
+        body.dark-mode .settings-item i { color: #ffffff; }
 
-        /* model select - nicer */
         .settings-item select {
             padding: 8px 16px; border-radius: 40px; border: 1px solid #b0b0b0;
             background: #f0f0f0; font-family: 'IBM Plex Sans'; font-size: 0.95rem;
@@ -236,8 +230,8 @@
         .logout-btn:hover { background: #d0d0d0; }
         body.dark-mode .logout-btn { background: #2a2a2a; color: #ffffff; border-color: #5a5a5a; }
         .logout-btn:hover { background: #3a3a3a; }
-        .logout-btn img { width: 16px; height: 16px; filter: brightness(0); }
-        body.dark-mode .logout-btn img { filter: brightness(0) invert(1); }
+        .logout-btn i { font-size: 1.1rem; color: #000000; }
+        body.dark-mode .logout-btn i { color: #ffffff; }
 
         /* chat container */
         .chat-container {
@@ -254,7 +248,6 @@
             from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
         .message-wrapper.user { align-self: flex-end; }
         .message-wrapper.assistant { align-self: flex-start; }
 
@@ -265,29 +258,20 @@
         .user .message-meta { justify-content: flex-end; }
 
         .avatar {
-            width: 24px;
-            height: 24px;
-            border-radius: 24px;
-            background: #d0d0d0;  /* grey background */
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 28px; height: 28px; border-radius: 28px;
+            background: #d0d0d0;
+            display: flex; align-items: center; justify-content: center;
             color: #000000;
-            font-size: 0.8rem;
         }
-        .avatar img {
-            width: 14px;
-            height: 14px;
-            filter: brightness(0);
-        }
-        body.dark-mode .avatar img { filter: brightness(0) invert(1); }
+        .avatar i { font-size: 1rem; color: #000000; }
+        body.dark-mode .avatar i { color: #ffffff; }
 
         .message-bubble {
             padding: 14px 18px; border-radius: 20px; font-size: 1rem; line-height: 1.6;
             word-break: break-word; border: 1px solid #d0d0d0;
         }
         .user .message-bubble {
-            background: #000000;   /* black */
+            background: #000000;
             color: #ffffff;
             border: 1px solid #3a3a3a;
         }
@@ -310,33 +294,28 @@
             max-width: 200px; border-radius: 12px; margin-bottom: 8px;
             border: 1px solid #b0b0b0;
         }
-
-        /* MathJax styling */
+        /* math */
         .message-bubble .MathJax { font-size: 1.1em; }
         .message-bubble mjx-container { margin: 4px 0; }
 
-        /* message actions (copy, regenerate) - TTS removed */
+        /* message actions (copy, speaker, regenerate) */
         .message-actions {
-            display: flex; gap: 8px; justify-content: flex-end; padding: 6px 8px 0;
+            display: flex; gap: 12px; justify-content: flex-end; padding: 8px 8px 0;
             opacity: 0; transition: opacity 0.15s;
         }
         .message-wrapper:hover .message-actions { opacity: 1; }
         .message-actions button {
-            background: transparent; border: 1px solid #c0c0c0; color: #1e1e1e; font-size: 0.8rem;
-            cursor: pointer; padding: 4px 10px; border-radius: 30px; display: inline-flex;
-            align-items: center; gap: 4px; transition: background 0.2s;
+            background: transparent; border: 1px solid #c0c0c0; color: #1e1e1e; font-size: 0.85rem;
+            cursor: pointer; padding: 6px 12px; border-radius: 30px; display: inline-flex;
+            align-items: center; gap: 6px; transition: background 0.2s;
         }
         .message-actions button:hover { background: #e0e0e0; }
         body.dark-mode .message-actions button { border-color: #5a5a5a; color: #dddddd; }
         body.dark-mode .message-actions button:hover { background: #3a3a3a; }
-        .message-actions button img {
-            width: 14px;
-            height: 14px;
-            filter: brightness(0);
-        }
-        body.dark-mode .message-actions button img { filter: brightness(0) invert(1); }
+        .message-actions button i { font-size: 1rem; color: #000000; }
+        body.dark-mode .message-actions button i { color: #ffffff; }
 
-        /* three-dot loading animation for assistant streaming */
+        /* typing indicator */
         .typing-indicator {
             display: inline-flex;
             gap: 4px;
@@ -365,18 +344,15 @@
         }
 
         .input-row {
-            display: flex; gap: 8px; align-items: flex-end; background: #f5f5f5;
+            display: flex; gap: 12px; align-items: flex-end; background: #f5f5f5;
             border-radius: 40px; padding: 4px 4px 4px 16px; border: 1px solid #c0c0c0;
             transition: border-color 0.2s;
         }
         .input-row:focus-within { border-color: #888; }
         body.dark-mode .input-row { background: #2a2a2a; border-color: #5a5a5a; }
 
-        /* image add button — now triggers dropdown (two options) */
-        .add-menu-container {
-            position: relative;
-            display: flex;
-        }
+        /* add dropdown */
+        .add-menu-container { position: relative; display: flex; }
         .add-dropdown {
             position: absolute; bottom: 60px; left: 0; background: #ffffff; border: 1px solid #b0b0b0;
             border-radius: 28px; display: flex; flex-direction: column; gap: 8px; padding: 12px;
@@ -385,47 +361,34 @@
         body.dark-mode .add-dropdown { background: #2a2a2a; border-color: #5a5a5a; }
         .add-dropdown.hidden { display: none; }
         .add-option {
-            background: none; border: none; padding: 8px 20px; display: flex; gap: 8px; align-items: center;
-            font-size: 0.95rem; cursor: pointer; border-radius: 40px; color: #000000; white-space: nowrap;
+            background: none; border: none; padding: 10px 24px; display: flex; gap: 12px; align-items: center;
+            font-size: 1rem; cursor: pointer; border-radius: 40px; color: #000000; white-space: nowrap;
         }
         .add-option:hover { background: #e0e0e0; }
         body.dark-mode .add-option { color: #ffffff; }
         body.dark-mode .add-option:hover { background: #3a3a3a; }
-        .add-option img {
-            width: 16px;
-            height: 16px;
-            filter: brightness(0);
-        }
-        body.dark-mode .add-option img { filter: brightness(0) invert(1); }
+        .add-option i { font-size: 1.2rem; color: #000000; width: 1.6rem; }
+        body.dark-mode .add-option i { color: #ffffff; }
 
         .input-row textarea {
-            flex: 1; border: none; background: transparent; padding: 10px 0;
-            font-family: 'IBM Plex Sans'; font-size: 0.95rem; resize: none; max-height: 100px;
+            flex: 1; border: none; background: transparent; padding: 12px 0;
+            font-family: 'IBM Plex Sans'; font-size: 1rem; resize: none; max-height: 120px;
             outline: none; color: #000000;
         }
         body.dark-mode .input-row textarea { color: #f0f0f0; }
 
         .action-group { display: flex; gap: 4px; }
         .circle-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 36px;
-            border: 1px solid #c0c0c0;
-            background: transparent;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
+            width: 44px; height: 44px; border-radius: 44px; border: 1px solid #c0c0c0;
+            background: transparent; display: flex;
+            align-items: center; justify-content: center; cursor: pointer;
             transition: background 0.2s;
+            font-size: 1.2rem;
         }
         .circle-btn:hover { background: #e0e0e0; }
         body.dark-mode .circle-btn:hover { background: #3a3a3a; }
-        .circle-btn img {
-            width: 16px;
-            height: 16px;
-            filter: brightness(0);
-        }
-        body.dark-mode .circle-btn img { filter: brightness(0) invert(1); }
+        .circle-btn i { color: #000000; }
+        body.dark-mode .circle-btn i { color: #ffffff; }
         .circle-btn.stop-btn { border-color: #b0b0b0; }
 
         #attachedPreview {
@@ -433,13 +396,13 @@
             animation: fadeIn 0.2s;
         }
         #previewImg {
-            max-width: 80px; max-height: 80px; border-radius: 12px;
+            max-width: 100px; max-height: 100px; border-radius: 12px;
             border: 1px solid #b0b0b0; background: #f0f0f0;
         }
         #removeImageBtn {
             position: absolute; top: -8px; right: -8px; background: #4a4a4a;
-            color: white; border: none; border-radius: 50%; width: 22px; height: 22px;
-            font-size: 0.9rem; cursor: pointer; display: flex; align-items: center;
+            color: white; border: none; border-radius: 50%; width: 24px; height: 24px;
+            font-size: 1rem; cursor: pointer; display: flex; align-items: center;
             justify-content: center; border: 1px solid #888;
         }
 
@@ -456,8 +419,7 @@
         <h2>Atlas</h2>
         <p>The Super Study Helper</p>
         <button class="login-btn" id="loginBtn">
-            <img src="artificial-intelligence.png" alt="Atlas logo">
-            Login
+            <i class="fas fa-robot"></i> Login
         </button>
     </div>
 
@@ -465,23 +427,19 @@
     <div id="chatApp" class="chat-app hidden">
         <div class="top-bar">
             <div class="app-name">
-                <img src="artificial-intelligence.png" alt="Atlas">
+                <i class="fas fa-brain"></i>
                 <span>Atlas</span>
             </div>
             <div class="top-actions">
-                <button class="icon-btn" id="themeToggle">
-                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='5' fill='%23000000'/%3E%3Cpath d='M12 2v2M12 20v2M4 4l2 2M18 18l2 2M2 12h2M20 12h2M4 20l2-2M18 6l2-2' stroke='%23000000' stroke-width='2' stroke-linecap='round' fill='none'/%3E%3C/svg%3E" alt="theme">
-                </button>
-                <button class="icon-btn" id="settingsToggle">
-                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000000'%3E%3Cpath d='M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94 0 .31.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.57 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z'/%3E%3C/svg%3E" alt="settings">
-                </button>
+                <button class="icon-btn" id="themeToggle"><i class="fas fa-circle-half-stroke"></i></button>
+                <button class="icon-btn" id="settingsToggle"><i class="fas fa-sliders"></i></button>
             </div>
         </div>
 
         <!-- settings panel -->
         <div class="settings-dropdown" id="settingsPanel">
             <div class="settings-item">
-                <span><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000000'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/%3E%3C/svg%3E"> Model</span>
+                <span><i class="fas fa-microchip"></i> Model</span>
                 <select id="modelSelect">
                     <option value="gpt-4.1-nano">GPT-4.1 Nano</option>
                     <option value="gpt-5" selected>GPT-5</option>
@@ -490,7 +448,7 @@
             </div>
             <div>
                 <button class="logout-btn" id="logoutBtn">
-                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.59L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z' fill='%23000000'/%3E%3C/svg%3E"> Sign out
+                    <i class="fas fa-sign-out-alt"></i> Sign out
                 </button>
             </div>
         </div>
@@ -499,7 +457,7 @@
         <div class="chat-container" id="chatContainer">
             <div class="message-wrapper assistant">
                 <div class="message-meta">
-                    <span class="avatar"><img src="artificial-intelligence.png" alt="assistant"></span>
+                    <span class="avatar"><i class="fas fa-robot"></i></span>
                     <span class="timestamp" id="welcomeTime"></span>
                 </div>
                 <div class="message-bubble">I'm Atlas. I was developed by Akash Dutta!</div>
@@ -511,29 +469,23 @@
             <div class="input-row">
                 <!-- add button with dropdown -->
                 <div class="add-menu-container">
-                    <button class="circle-btn" id="addBtn">
-                        <img src="add.png" alt="add">
-                    </button>
+                    <button class="circle-btn" id="addBtn"><i class="fas fa-plus"></i></button>
                     <div class="add-dropdown hidden" id="addDropdown">
-                        <button class="add-option" id="cameraOption"><img src="photo-camera-interface-symbol-for-button.png" alt="camera"> Camera</button>
-                        <button class="add-option" id="imageOption"><img src="image.png" alt="image"> Image</button>
+                        <button class="add-option" id="cameraOption"><i class="fas fa-camera"></i> Camera</button>
+                        <button class="add-option" id="imageOption"><i class="fas fa-image"></i> Image</button>
                     </div>
                 </div>
                 <input type="file" id="imageFileInput" accept="image/*" capture="environment" hidden />
                 <input type="file" id="cameraFileInput" accept="image/*" capture="environment" hidden />
                 <textarea id="userInput" placeholder="Ask Atlas..." rows="1"></textarea>
                 <div class="action-group">
-                    <button class="circle-btn stop-btn hidden" id="stopBtn">
-                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000000'%3E%3Crect x='6' y='6' width='12' height='12' rx='1'/%3E%3C/svg%3E" alt="stop">
-                    </button>
-                    <button class="circle-btn" id="sendBtn">
-                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000000'%3E%3Cpath d='M2.01 21L23 12 2.01 3 2 10l15 2-15 2z'/%3E%3C/svg%3E" alt="send">
-                    </button>
+                    <button class="circle-btn stop-btn hidden" id="stopBtn"><i class="fas fa-stop"></i></button>
+                    <button class="circle-btn" id="sendBtn"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
             <div id="attachedPreview">
                 <img id="previewImg" src="#" alt="preview">
-                <button id="removeImageBtn">×</button>
+                <button id="removeImageBtn"><i class="fas fa-times"></i></button>
             </div>
         </div>
     </div>
@@ -553,7 +505,6 @@
             const settingsToggle = document.getElementById('settingsToggle');
             const settingsPanel = document.getElementById('settingsPanel');
             const modelSelect = document.getElementById('modelSelect');
-            // add dropdown elements
             const addBtn = document.getElementById('addBtn');
             const addDropdown = document.getElementById('addDropdown');
             const cameraOption = document.getElementById('cameraOption');
@@ -581,12 +532,10 @@
                 hours = hours % 12 || 12;
                 return `${hours}:${minutes} ${ampm}`;
             };
-            // set welcome timestamp
             document.getElementById('welcomeTime').innerText = formatTime12h();
 
             const isPuterReady = () => typeof puter !== 'undefined' && puter.ai && puter.auth;
 
-            // reliable math render (after DOM update)
             function renderMath() {
                 if (window.MathJax && window.MathJax.typesetPromise) {
                     window.MathJax.typesetPromise(Array.from(document.querySelectorAll('.message-bubble')))
@@ -634,10 +583,9 @@
 
                 const meta = document.createElement('div');
                 meta.className = 'message-meta';
-                // user avatar: user.png, assistant avatar: artificial-intelligence.png
                 const avatarIcon = msg.role === 'user' 
-                    ? '<img src="user.png" alt="user">'
-                    : '<img src="artificial-intelligence.png" alt="assistant">';
+                    ? '<i class="fas fa-user"></i>'
+                    : '<i class="fas fa-robot"></i>';
                 meta.innerHTML = `
                     <span class="avatar">${avatarIcon}</span>
                     <span class="timestamp">${formatTime12h()}</span>
@@ -655,12 +603,13 @@
                 const actionsDiv = document.createElement('div');
                 actionsDiv.className = 'message-actions';
                 
-                // Copy only (TTS removed) + regenerate for assistant
+                // always copy + speak, and regenerate for assistant
                 actionsDiv.innerHTML = `
-                    <button class="copy-msg"><img src="copy.png" alt="copy"> Copy</button>
+                    <button class="copy-msg"><i class="fas fa-copy"></i> Copy</button>
+                    <button class="speaker-msg"><i class="fas fa-volume-up"></i> Speak</button>
                 `;
                 if (msg.role === 'assistant') {
-                    actionsDiv.innerHTML += `<button class="regenerate-msg"><img src="recover.png" alt="regenerate"> Regenerate</button>`;
+                    actionsDiv.innerHTML += `<button class="regenerate-msg"><i class="fas fa-undo-alt"></i> Regenerate</button>`;
                 }
                 wrapper.appendChild(actionsDiv);
                 chatContainer.appendChild(wrapper);
@@ -687,11 +636,10 @@
                 wrapper.dataset.messageId = assistantId;
                 const meta = document.createElement('div');
                 meta.className = 'message-meta';
-                meta.innerHTML = `<span class="avatar"><img src="artificial-intelligence.png" alt="assistant"></span><span class="timestamp">${formatTime12h()}</span>`;
+                meta.innerHTML = `<span class="avatar"><i class="fas fa-robot"></i></span><span class="timestamp">${formatTime12h()}</span>`;
                 wrapper.appendChild(meta);
                 const bubble = document.createElement('div');
                 bubble.className = 'message-bubble';
-                // add three-dot indicator while streaming
                 const indicator = document.createElement('span');
                 indicator.className = 'typing-indicator';
                 indicator.innerHTML = '<span></span><span></span><span></span>';
@@ -700,7 +648,7 @@
 
                 const actionsDiv = document.createElement('div');
                 actionsDiv.className = 'message-actions';
-                actionsDiv.innerHTML = `<button class="copy-msg"><img src="copy.png" alt="copy"> Copy</button><button class="regenerate-msg"><img src="recover.png" alt="regenerate"> Regenerate</button>`;
+                actionsDiv.innerHTML = `<button class="copy-msg"><i class="fas fa-copy"></i> Copy</button><button class="speaker-msg"><i class="fas fa-volume-up"></i> Speak</button><button class="regenerate-msg"><i class="fas fa-undo-alt"></i> Regenerate</button>`;
                 wrapper.appendChild(actionsDiv);
                 chatContainer.appendChild(wrapper);
                 scrollToBottom();
@@ -734,7 +682,7 @@
                             fullText += part.text;
                             bubble.innerHTML = marked.parse(fullText);
                             scrollToBottom();
-                            renderMath(); // after each chunk
+                            renderMath();
                         }
                     }
 
@@ -754,8 +702,6 @@
             }
 
             // ----- event listeners -----
-
-            // add button dropdown
             addBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 addDropdown.classList.toggle('hidden');
@@ -823,8 +769,12 @@
                 if (btn.classList.contains('copy-msg')) {
                     await navigator.clipboard.writeText(msg.content);
                     const orig = btn.innerHTML;
-                    btn.innerHTML = '<img src="data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2300aa00\'%3E%3Cpath d=\'M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z\'/%3E%3C/svg%3E> Copied';
+                    btn.innerHTML = '<i class="fas fa-check" style="color:#00aa00"></i> Copied';
                     setTimeout(() => btn.innerHTML = orig, 1200);
+                }
+                if (btn.classList.contains('speaker-msg')) {
+                    const utterance = new SpeechSynthesisUtterance(msg.content);
+                    speechSynthesis.speak(utterance);
                 }
                 if (btn.classList.contains('regenerate-msg') && msg.role === 'assistant') {
                     const idx = messages.findIndex(m => m.id === msgId);
