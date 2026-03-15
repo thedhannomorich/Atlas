@@ -925,6 +925,27 @@
 body.dark-mode #loginLoadingProgress {
   background: #ffffff;
 }
+.message-bubble table {
+  border-collapse: collapse;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.message-bubble th,
+.message-bubble td {
+  border: 1px solid #ccc;
+  padding: 6px 10px;
+  text-align: left;
+}
+
+.message-bubble th {
+  background: #f0f0f0;
+  font-weight: 600;
+}
+
+body.dark-mode .message-bubble th {
+  background: #3a3a3a;
+}
     </style>
   </head>
   <body>
@@ -1021,7 +1042,7 @@ body.dark-mode #loginLoadingProgress {
         </div>
       </div>
     </div>
-    <script>
+<script>
   (function() {
     // DOM elements
     const loginScreen = document.getElementById('loginScreen');
@@ -1130,37 +1151,37 @@ body.dark-mode #loginLoadingProgress {
     }
     
     async function initialize() {
-  if (!isPuterReady()) {
-    setTimeout(initialize, 80);
-    return;
-  }
-  
-  // Show loading bar animation
-  const loadingBar = document.getElementById('loginLoadingProgress');
-  const loginBtn = document.getElementById('loginBtn');
-  
-  // Animate from 0% to 90% while checking
-  loadingBar.style.width = '30%';
-  
-  const authenticated = await checkAuth();
-  
-  loadingBar.style.width = '90%';
-  
-  if (authenticated) {
-    loadingBar.style.width = '100%';
-    setTimeout(() => {
-      isAuthenticated = true;
-      showChatApp();
-    }, 300);
-  } else {
-    loadingBar.style.width = '100%';
-    setTimeout(() => {
-      // Hide loading bar, show login button
-      document.getElementById('loginLoadingBar').style.display = 'none';
-      loginBtn.classList.remove('hidden');
-    }, 300);
-  }
-}
+      if (!isPuterReady()) {
+        setTimeout(initialize, 80);
+        return;
+      }
+      
+      // Show loading bar animation
+      const loadingBar = document.getElementById('loginLoadingProgress');
+      const loginBtn = document.getElementById('loginBtn');
+      
+      // Animate from 0% to 90% while checking
+      loadingBar.style.width = '30%';
+      
+      const authenticated = await checkAuth();
+      
+      loadingBar.style.width = '90%';
+      
+      if (authenticated) {
+        loadingBar.style.width = '100%';
+        setTimeout(() => {
+          isAuthenticated = true;
+          showChatApp();
+        }, 300);
+      } else {
+        loadingBar.style.width = '100%';
+        setTimeout(() => {
+          // Hide loading bar, show login button
+          document.getElementById('loginLoadingBar').style.display = 'none';
+          loginBtn.classList.remove('hidden');
+        }, 300);
+      }
+    }
 
     function showChatApp() {
       loginScreen.classList.add('hidden');
@@ -1325,6 +1346,25 @@ body.dark-mode #loginLoadingProgress {
       
       try {
         let response;
+        
+        // System prompt for Markdown formatting
+        const systemPrompt = {
+          role: "system",
+          content: `
+Always respond using Markdown formatting.
+
+Rules:
+- Use ## for main headings
+- Use ### for subheadings
+- Use bullet lists (-)
+- Use numbered lists for steps
+- Use tables when showing structured information
+- Use **bold** for important terms
+- Use code blocks for code
+- Avoid long plain paragraphs
+`
+        };
+        
         if (imageBase64) {
           response = await puter.ai.chat(text.trim() || 'Describe this image', imageBase64, {
             model: modelSelect.value,
@@ -1332,10 +1372,17 @@ body.dark-mode #loginLoadingProgress {
             signal: abortController.signal
           });
         } else {
-          const conversationForAI = messages.filter(m => m.id !== assistantId).map(m => ({
-            role: m.role,
-            content: m.content
-          }));
+          // Build conversation with system prompt
+          const conversationForAI = [
+            systemPrompt,
+            ...messages
+              .filter(m => m.id !== assistantId)
+              .map(m => ({
+                role: m.role,
+                content: m.content
+              }))
+          ];
+          
           response = await puter.ai.chat(conversationForAI, {
             model: modelSelect.value,
             stream: true,
