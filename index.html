@@ -199,8 +199,8 @@
       }
 
       .app-name .logo-img img {
-        max-width: 100%;
-        max-height: 100%;
+        max-width: 1000%;
+        max-height: 1000%;
         object-fit: contain;
       }
 
@@ -799,7 +799,7 @@
         }
 
         .app-name span {
-          font-size: 2.2rem;
+          font-size: 2.7rem;
         }
 
         .login-screen {
@@ -921,7 +921,7 @@
         <div class="app-name">
           <!-- logo.png instead of brain icon (embedded as inline SVG fallback but we use img) -->
           <div class="logo-img">
-            <img src="logo.png" alt="Atlas logo" style="width:36px; height:36px;">
+            <img src="logo.png" alt="Atlas logo" style="width:65px; height:65px;">
           </div>
           <span>Atlas</span>
         </div>
@@ -1182,16 +1182,16 @@
       actionsDiv.className = 'message-actions';
       actionsDiv.innerHTML = `
         <button class="copy-msg">
-          <i class="fas fa-copy"></i>
+          <i class="fa-slab fa-regular fa-copy"></i>
         </button>
         <button class="speaker-msg">
-          <i class="fas fa-volume-up"></i>
+          <i class="fas fa-audio-description"></i>
         </button>
       `;
       if (msg.role === 'assistant') {
         actionsDiv.innerHTML += `
           <button class="regenerate-msg">
-            <i class="fas fa-undo-alt"></i>
+            <i class="fas fa-sync"></i>
           </button>`;
       }
       wrapper.appendChild(actionsDiv);
@@ -1254,13 +1254,13 @@
       actionsDiv.className = 'message-actions';
       actionsDiv.innerHTML = `
         <button class="copy-msg">
-          <i class="fas fa-copy"></i> Copy
+          <i class="fa-slab fa-regular fa-copy"></i>
         </button>
         <button class="speaker-msg">
-          <i class="fas fa-volume-up"></i> Speak
+          <i class="fas fa-audio-description"></i>
         </button>
         <button class="regenerate-msg">
-          <i class="fas fa-undo-alt"></i> Regenerate
+          <i class="fas fa-sync"></i>
         </button>`;
       wrapper.appendChild(actionsDiv);
       
