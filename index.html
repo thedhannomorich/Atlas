@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Atlas</title>
     <!-- Font Awesome 6 (free) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.2.0/css/all.min.css">
     <!-- Google Fonts: Hind Siliguri + Poppins (exactly as requested) + fallback -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -905,6 +905,25 @@
       * {
         -webkit-tap-highlight-color: transparent;
       }
+      #loginLoadingBar {
+  width: 100%;
+  height: 4px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  margin-bottom: 32px;
+  overflow: hidden;
+}
+
+#loginLoadingProgress {
+  width: 0%;
+  height: 100%;
+  background: #000000;
+  transition: width 0.3s ease;
+}
+
+body.dark-mode #loginLoadingProgress {
+  background: #ffffff;
+}
     </style>
   </head>
   <body>
@@ -912,8 +931,12 @@
     <div id="loginScreen" class="login-screen">
       <h2>Atlas</h2>
       <p>The Super Study Helper</p>
-      <button class="login-btn" id="loginBtn">
-        <i class="fas fa-robot"></i> Login </button>
+      <div id="loginLoadingBar" style="width:100%; height:4px; background:#f0f0f0; border-radius:4px; margin-bottom:32px; overflow:hidden;">
+  <div id="loginLoadingProgress" style="width:0%; height:100%; background:#000000; transition:width 0.3s ease;"></div>
+</div>
+<button class="login-btn hidden" id="loginBtn">
+  <i class="fa-solid fa-circle-check"></i> Login
+</button>
     </div>
     <!-- Main chat app -->
     <div id="chatApp" class="chat-app hidden">
@@ -947,7 +970,7 @@
         </div>
         <div>
           <button class="logout-btn" id="logoutBtn">
-            <i class="fas fa-sign-out-alt"></i> Sign out </button>
+            <i class="fa-solid fa-right-from-bracket"></i> Sign out </button>
         </div>
       </div>
       <!-- chat messages container -->
@@ -982,7 +1005,7 @@
           <textarea id="userInput" placeholder="Ask Atlas..." rows="1"></textarea>
           <div class="action-group">
             <button class="circle-btn stop-btn hidden" id="stopBtn">
-              <i class="fas fa-stop"></i>
+              <i class="fa-solid fa-circle-xmark"></i>
             </button>
             <button class="circle-btn" id="sendBtn">
               <i class="fas fa-paper-plane"></i>
@@ -992,7 +1015,7 @@
         <div id="attachedPreview">
           <img id="previewImg" src="#" alt="preview">
           <button id="removeImageBtn">
-            <i class="fas fa-times"></i>
+            <i class="fa-regular fa-circle-xmark"></i>
           </button>
         </div>
       </div>
@@ -1106,20 +1129,37 @@
     }
     
     async function initialize() {
-      if (!isPuterReady()) {
-        setTimeout(initialize, 80);
-        return;
-      }
-      
-      const authenticated = await checkAuth();
-      
-      if (authenticated) {
-        isAuthenticated = true;
-        showChatApp();
-      } else {
-        showLoginScreen();
-      }
-    }
+  if (!isPuterReady()) {
+    setTimeout(initialize, 80);
+    return;
+  }
+  
+  // Show loading bar animation
+  const loadingBar = document.getElementById('loginLoadingProgress');
+  const loginBtn = document.getElementById('loginBtn');
+  
+  // Animate from 0% to 90% while checking
+  loadingBar.style.width = '30%';
+  
+  const authenticated = await checkAuth();
+  
+  loadingBar.style.width = '90%';
+  
+  if (authenticated) {
+    loadingBar.style.width = '100%';
+    setTimeout(() => {
+      isAuthenticated = true;
+      showChatApp();
+    }, 300);
+  } else {
+    loadingBar.style.width = '100%';
+    setTimeout(() => {
+      // Hide loading bar, show login button
+      document.getElementById('loginLoadingBar').style.display = 'none';
+      loginBtn.classList.remove('hidden');
+    }, 300);
+  }
+}
 
     function showChatApp() {
       loginScreen.classList.add('hidden');
