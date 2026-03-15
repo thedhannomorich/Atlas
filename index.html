@@ -627,8 +627,8 @@
 
       .add-dropdown {
         position: absolute;
-        bottom: 60px;
-        left: 0;
+        bottom: 68px;
+        left: -18px;
         background: #ffffff;
         border: 1px solid #b0b0b0;
         border-radius: 28px;
@@ -652,7 +652,7 @@
       .add-option {
         background: none;
         border: none;
-        padding: 10px 20px;
+        padding: 14px 10px;
         display: flex;
         gap: 12px;
         align-items: center;
@@ -708,9 +708,9 @@
       }
 
       .circle-btn {
-        width: 44px;
-        height: 44px;
-        border-radius: 44px;
+        width: 48px;
+        height: 50px;
+        border-radius: 26px;
         border: 1px solid #c0c0c0;
         background: transparent;
         display: flex;
@@ -1448,7 +1448,7 @@
       if (btn.classList.contains('copy-msg')) {
         await navigator.clipboard.writeText(msg.content);
         const orig = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-check" style="color:#00aa00"></i> Copied';
+        btn.innerHTML = '<i class="fas fa-check" style="color:#00aa00"></i>';
         setTimeout(() => btn.innerHTML = orig, 1200);
       }
       
