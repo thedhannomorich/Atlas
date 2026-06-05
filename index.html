@@ -401,31 +401,31 @@ font-weight: 400;
     const db = firebase.firestore();
     const provider = new firebase.auth.GoogleAuthProvider();
 
-    const models = [
-      { name: "NVIDIA Nemotron 3 Super", provider: "NVIDIA", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://nvidia.com/&size=256", url: "/NVIDIANemotron3Super/index.html" },
-      { name: "Poolside Laguna M.1", provider: "Poolside", logo: "https://openrouter.ai/images/icons/poolside-logomark-solid-color.svg", url: "/PoolsideLagunaM1/index.html" },
-      { name: "OpenAI gpt-oss-120b", provider: "OpenAI", logo: "https://openrouter.ai/images/icons/OpenAI.svg", url: "/OpenAIgptoss120b/index.html" },
-      { name: "Z.ai GLM 4.5 Air", provider: "Z.ai", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://z.ai/&size=256", url: "/ZaiGLM45Air/index.html" },
-      { name: "Poolside Laguna XS.2", provider: "Poolside", logo: "https://openrouter.ai/images/icons/poolside-logomark-solid-color.svg", url: "/PoolsideLagunaXS2/index.html" },
-      { name: "OpenAI gpt-oss-20b", provider: "OpenAI", logo: "https://openrouter.ai/images/icons/OpenAI.svg", url: "/OpenAIgptoss20b/index.html" },
-      { name: "NVIDIA Nemotron 3 Ultra", provider: "NVIDIA", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://nvidia.com/&size=256", url: "/NVIDIANemotron3Ultra/index.html" },
-      { name: "NVIDIA Nemotron 3 Nano 30B A3B", provider: "NVIDIA", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://nvidia.com/&size=256", url: "/NVIDIANemotron3Nano30BA3B/index.html" },
-      { name: "Google Gemma 4 31B", provider: "Google", logo: "https://openrouter.ai/images/icons/GoogleGemini.svg", url: "/GoogleGemma431B/index.html" },
-      { name: "NVIDIA Nemotron 3 Nano Omni", provider: "NVIDIA", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://nvidia.com/&size=256", url: "/NVIDIANemotron3NanoOmni/index.html" },
-      { name: "MoonshotAI Kimi K2.6", provider: "MoonshotAI", logo: "https://openrouter.ai/images/icons/MoonshotAI.png", url: "/MoonshotAIKimiK26/index.html" },
-      { name: "NVIDIA Nemotron Nano 9B V2", provider: "NVIDIA", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://nvidia.com/&size=256", url: "/NVIDIANemotronNano9BV2/index.html" },
-      { name: "NVIDIA Nemotron Nano 12B 2 VL", provider: "NVIDIA", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://nvidia.com/&size=256", url: "/NVIDIANemotronNano12B2VL/index.html" },
-      { name: "Google Gemma 4 26B A4B", provider: "Google", logo: "https://openrouter.ai/images/icons/GoogleGemini.svg", url: "/GoogleGemma426BA4B/index.html" },
-      { name: "LiquidAI LFM2.5-1.2B-Thinking", provider: "LiquidAI", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://www.liquid.ai/&size=256", url: "/LiquidAILFM2512BThinking/index.html" },
-      { name: "LiquidAI LFM2.5-1.2B-Instruct", provider: "LiquidAI", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://www.liquid.ai/&size=256", url: "/LiquidAILFM2512BInstruct/index.html" },
-      { name: "Qwen3 Next 80B A3B Instruct", provider: "Qwen", logo: "https://openrouter.ai/images/icons/Qwen.png", url: "/Qwen3Next80BA3BInstruct/index.html" },
-      { name: "Meta Llama 3.3 70B Instruct", provider: "Meta", logo: "https://openrouter.ai/images/icons/Meta.png", url: "/MetaLlama3370BInstruct/index.html" },
-      { name: "Venice Uncensored", provider: "Venice", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://huggingface.co/&size=256", url: "/VeniceUncensored/index.html" },
-      { name: "NVIDIA Nemotron 3.5 Content Safety", provider: "NVIDIA", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://nvidia.com/&size=256", url: "/NVIDIANemotron35ContentSafety/index.html" },
-      { name: "Nous Hermes 3 405B Instruct", provider: "Nous Research", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://nousresearch.com/&size=256", url: "/NousHermes3405BInstruct/index.html" },
-      { name: "Meta Llama 3.2 3B Instruct", provider: "Meta", logo: "https://openrouter.ai/images/icons/Meta.png", url: "/MetaLlama323BInstruct/index.html" },
-      { name: "Qwen3 Coder 480B A35B Instruct", provider: "Qwen", logo: "https://openrouter.ai/images/icons/Qwen.png", url: "/Qwen3Coder480BA35BInstruct/index.html" }
-    ];
+const models = [
+  { name: "NVIDIA Nemotron 3 Super", provider: "NVIDIA", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://nvidia.com/&size=256", url: "/Atlas/NVIDIANemotron3Super" },
+  { name: "Poolside Laguna M.1", provider: "Poolside", logo: "https://openrouter.ai/images/icons/poolside-logomark-solid-color.svg", url: "/Atlas/PoolsideLagunaM1" },
+  { name: "OpenAI gpt-oss-120b", provider: "OpenAI", logo: "https://openrouter.ai/images/icons/OpenAI.svg", url: "/Atlas/OpenAIgptoss120b" },
+  { name: "Z.ai GLM 4.5 Air", provider: "Z.ai", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://z.ai/&size=256", url: "/Atlas/ZaiGLM45Air" },
+  { name: "Poolside Laguna XS.2", provider: "Poolside", logo: "https://openrouter.ai/images/icons/poolside-logomark-solid-color.svg", url: "/Atlas/PoolsideLagunaXS2" },
+  { name: "OpenAI gpt-oss-20b", provider: "OpenAI", logo: "https://openrouter.ai/images/icons/OpenAI.svg", url: "/Atlas/OpenAIgptoss20b" },
+  { name: "NVIDIA Nemotron 3 Ultra", provider: "NVIDIA", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://nvidia.com/&size=256", url: "/Atlas/NVIDIANemotron3Ultra" },
+  { name: "NVIDIA Nemotron 3 Nano 30B A3B", provider: "NVIDIA", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://nvidia.com/&size=256", url: "/Atlas/NVIDIANemotron3Nano30BA3B" },
+  { name: "Google Gemma 4 31B", provider: "Google", logo: "https://openrouter.ai/images/icons/GoogleGemini.svg", url: "/Atlas/GoogleGemma431B" },
+  { name: "NVIDIA Nemotron 3 Nano Omni", provider: "NVIDIA", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://nvidia.com/&size=256", url: "/Atlas/NVIDIANemotron3NanoOmni" },
+  { name: "MoonshotAI Kimi K2.6", provider: "MoonshotAI", logo: "https://openrouter.ai/images/icons/MoonshotAI.png", url: "/Atlas/MoonshotAIKimiK26" },
+  { name: "NVIDIA Nemotron Nano 9B V2", provider: "NVIDIA", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://nvidia.com/&size=256", url: "/Atlas/NVIDIANemotronNano9BV2" },
+  { name: "NVIDIA Nemotron Nano 12B 2 VL", provider: "NVIDIA", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://nvidia.com/&size=256", url: "/Atlas/NVIDIANemotronNano12B2VL" },
+  { name: "Google Gemma 4 26B A4B", provider: "Google", logo: "https://openrouter.ai/images/icons/GoogleGemini.svg", url: "/Atlas/GoogleGemma426BA4B" },
+  { name: "LiquidAI LFM2.5-1.2B-Thinking", provider: "LiquidAI", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://www.liquid.ai/&size=256", url: "/Atlas/LiquidAILFM2512BThinking" },
+  { name: "LiquidAI LFM2.5-1.2B-Instruct", provider: "LiquidAI", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://www.liquid.ai/&size=256", url: "/Atlas/LiquidAILFM2512BInstruct" },
+  { name: "Qwen3 Next 80B A3B Instruct", provider: "Qwen", logo: "https://openrouter.ai/images/icons/Qwen.png", url: "/Atlas/Qwen3Next80BA3BInstruct" },
+  { name: "Meta Llama 3.3 70B Instruct", provider: "Meta", logo: "https://openrouter.ai/images/icons/Meta.png", url: "/Atlas/MetaLlama3370BInstruct" },
+  { name: "Venice Uncensored", provider: "Venice", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://huggingface.co/&size=256", url: "/Atlas/VeniceUncensored" },
+  { name: "NVIDIA Nemotron 3.5 Content Safety", provider: "NVIDIA", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://nvidia.com/&size=256", url: "/Atlas/NVIDIANemotron35ContentSafety" },
+  { name: "Nous Hermes 3 405B Instruct", provider: "Nous Research", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://nousresearch.com/&size=256", url: "/Atlas/NousHermes3405BInstruct" },
+  { name: "Meta Llama 3.2 3B Instruct", provider: "Meta", logo: "https://openrouter.ai/images/icons/Meta.png", url: "/Atlas/MetaLlama323BInstruct" },
+  { name: "Qwen3 Coder 480B A35B Instruct", provider: "Qwen", logo: "https://openrouter.ai/images/icons/Qwen.png", url: "/Atlas/Qwen3Coder480BA35BInstruct" }
+];
 
     const modelsGrid = document.getElementById("modelsGrid");
     const searchInput = document.getElementById("searchInput");
