@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NVIDIA Nemotron 3 Super</title>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    :root{--bg:#0b0f17;--panel:#111827;--panel2:#0f1620;--card:#101826;--hover:#162235;--text:#eef2f7;--muted:#9aa6b2;--line:#243244;--primary:#76b900;--blue:#38bdf8;--danger:#ef4444;--radius:10px;--shadow:0 24px 70px rgba(0,0,0,.5)}
+    body{height:100vh;overflow:hidden;color:var(--text);background:linear-gradient(180deg,#0b0f14 0%,#101720 48%,#0b0f14 100%)}
+    button,input,textarea{font:inherit}
+    button{cursor:pointer}
+    .app{height:100vh;display:grid;grid-template-columns:300px 1fr}
+    .sidebar{height:100vh;background:#0d1420;border-right:1px solid var(--line);display:flex;flex-direction:column;min-width:0}
+    .side-head{height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid var(--line)}
+    .brand{display:flex;align-items:center;gap:12px;min-width:0}
+    .brand img,.hero-logo{width:42px;height:42px;border-radius:var(--radius);object-fit:contain;background:#fff;border:1px solid var(--line);padding:5px}
+    .brand span{font-size:23px;font-weight:700;white-space:nowrap}
+    .icon-btn{width:38px;height:38px;border:1px solid var(--line);border-radius:var(--radius);background:#101826;color:var(--text);display:grid;place-items:center;transition:.18s}
+    .icon-btn:hover,.new-chat:hover,.chat-item:hover{background:var(--hover);border-color:rgba(56,189,248,.48)}
+    .new-chat{height:46px;margin:14px 14px 10px;border:1px solid var(--line);border-radius:var(--radius);background:#101826;color:var(--text);font-weight:700;display:flex;align-items:center;justify-content:center;gap:9px}
+    .side-title{padding:12px 16px 9px;color:var(--muted);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;border-top:1px solid var(--line)}
+    .chat-list{flex:1;overflow:auto;padding:0 10px 12px}
+    .chat-item{width:100%;min-height:42px;border:1px solid transparent;border-radius:var(--radius);background:transparent;color:var(--text);padding:10px 12px;text-align:left;display:flex;align-items:center;gap:9px}
+    .chat-item.active{background:rgba(118,185,0,.13);border-color:rgba(118,185,0,.4)}
+    .chat-item span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}
+    .account{border-top:1px solid var(--line);padding:13px 14px 16px}
+    .google-btn,.user-btn{width:100%;min-height:46px;border:1px solid var(--line);border-radius:var(--radius);display:flex;align-items:center;gap:10px;padding:0 12px}
+    .google-btn{background:#fff;color:#111827;font-weight:700;justify-content:center}
+    .user-btn{background:#101826;color:var(--text);text-align:left}
+    .user-btn img{width:34px;height:34px;border-radius:50%;object-fit:cover;background:#dbeafe}
+    .user-name{font-weight:700;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .user-email{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .main{height:100vh;display:flex;flex-direction:column;min-width:0}
+    .top{height:76px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 22px;background:rgba(11,15,23,.72);backdrop-filter:blur(14px)}
+    .model-title{display:flex;align-items:center;gap:12px;min-width:0}
+    .model-title h1{font-size:22px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .menu-btn{display:none}
+    .messages{flex:1;overflow:auto;padding:34px 22px 24px}
+    .welcome{max-width:820px;margin:0 auto 26px;text-align:center;padding-top:44px}
+    .welcome-row{display:flex;justify-content:center;align-items:center;gap:14px;margin-bottom:18px}
+    .welcome h2{font-size:clamp(30px,5vw,52px);line-height:1.05;font-weight:800}
+    .welcome p{margin-top:12px;color:var(--muted);font-size:18px}
+    .thread{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+    .msg{display:flex;gap:12px;align-items:flex-start}
+    .msg.user{justify-content:flex-end}
+    .bubble{max-width:min(720px,88%);border:1px solid var(--line);border-radius:var(--radius);padding:14px 15px;line-height:1.6;font-size:15px;white-space:pre-wrap;word-wrap:break-word}
+    .user .bubble{background:rgba(56,189,248,.12);border-color:rgba(56,189,248,.32)}
+    .assistant .bubble{background:var(--card);box-shadow:var(--shadow)}
+    .avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;background:#fff;border:1px solid var(--line)}
+    .actions{display:flex;gap:8px;margin-top:9px}
+    .mini{width:34px;height:34px;border:1px solid var(--line);border-radius:8px;background:#0f1620;color:var(--muted);display:grid;place-items:center}
+    .mini:hover{color:var(--text);border-color:rgba(56,189,248,.48)}
+    .composer-wrap{padding:14px 22px 22px;border-top:1px solid var(--line);background:rgba(11,15,23,.88)}
+    .composer{max-width:860px;margin:0 auto;display:grid;grid-template-columns:1fr 48px;gap:10px;align-items:end}
+    textarea{height:54px;max-height:180px;resize:none;border:1px solid var(--line);border-radius:var(--radius);background:#0f1620;color:var(--text);padding:16px;outline:none;font-size:15px}
+    textarea:focus{border-color:rgba(56,189,248,.65);box-shadow:0 0 0 4px rgba(56,189,248,.12)}
+    textarea:disabled{opacity:.6}
+    .send{height:54px;border:1px solid rgba(118,185,0,.55);border-radius:var(--radius);background:var(--primary);color:#081008;font-weight:800;display:grid;place-items:center}
+    .send.stop{background:var(--danger);border-color:rgba(239,68,68,.65);color:#fff}
+    .lock{max-width:860px;margin:0 auto 12px;border:1px solid rgba(239,68,68,.35);background:rgba(239,68,68,.1);color:#fecaca;padding:11px 13px;border-radius:var(--radius);font-size:14px}
+    .hidden{display:none!important}
+    svg{width:19px;height:19px}
+    @media(max-width:820px){
+      .app{grid-template-columns:1fr}
+      .sidebar{position:fixed;inset:0 auto 0 0;width:min(310px,86vw);z-index:20;transform:translateX(-105%);transition:.2s}
+      .sidebar.open{transform:translateX(0)}
+      .menu-btn{display:grid}
+      .top{padding:0 14px}
+      .model-title h1{font-size:17px}
+      .messages{padding:20px 12px}
+      .composer-wrap{padding:12px}
+      .bubble{max-width:92%}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="side-head">
+        <div class="brand">
+          <img src="../assets/logo.png" alt="Atlas logo" onerror="this.src='https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://nvidia.com/&size=256'">
+          <span>Atlas</span>
+        </div>
+        <button class="icon-btn" id="closeSide" title="Close sidebar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <button class="new-chat" id="newChat">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>
+        New Chat
+      </button>
+
+      <div class="side-title">Previous Chats</div>
+      <div class="chat-list" id="chatList"></div>
+
+      <div class="account">
+        <button class="google-btn" id="googleLogin">
+          <svg width="19" height="19" viewBox="0 0 48 48">
+            <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.4-.4-3.5z"/>
+            <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 16.2 4 9.5 8.5 6.3 14.7z"/>
+            <path fill="#4CAF50" d="M24 44c5.1 0 9.8-2 13.3-5.2l-6.2-5.2C29.1 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.8l-6.5 5C9.3 39.6 16 44 24 44z"/>
+            <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.2-4.2 5.6l6.2 5.2C36.9 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/>
+          </svg>
+          Continue with Google
+        </button>
+
+        <button class="user-btn hidden" id="userBox" title="Click to sign out">
+          <img id="userPic" alt="User profile">
+          <div style="min-width:0">
+            <div class="user-name" id="fullName"></div>
+            <div class="user-email" id="userEmail"></div>
+          </div>
+        </button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="top">
+        <button class="icon-btn menu-btn" id="openSide" title="Open sidebar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+
+        <div class="model-title">
+          <img class="hero-logo" src="https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://nvidia.com/&size=256" alt="NVIDIA logo">
+          <h1>NVIDIA Nemotron 3 Super</h1>
+        </div>
+
+        <a class="icon-btn" href="../index.html" title="Back to Atlas">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m15 18-6-6 6-6"/></svg>
+        </a>
+      </header>
+
+      <section class="messages" id="messages">
+        <div class="welcome" id="welcome">
+          <div class="welcome-row">
+            <img class="hero-logo" src="https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://nvidia.com/&size=256" alt="NVIDIA logo">
+          </div>
+          <h2>Hey! What's on your mind today?</h2>
+          <p>Ask anything and start a new conversation.</p>
+        </div>
+        <div class="thread" id="thread"></div>
+      </section>
+
+      <div class="composer-wrap">
+        <div class="lock hidden" id="loginLock">Please continue with Google before sending messages.</div>
+        <form class="composer" id="chatForm">
+          <textarea id="prompt" placeholder="Ask anything" rows="1"></textarea>
+          <button class="send" id="sendBtn" type="submit" title="Send">
+            <svg id="sendIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+          </button>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const OPENROUTER_API_KEY = "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";
+    const MODEL = "nvidia/nemotron-3-super-120b-a12b:free";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA8jOSZR4Z7QtYUq4B5L1UIpL4_LWOQJb8",
+      authDomain: "bdatlasai.firebaseapp.com",
+      projectId: "bdatlasai",
+      storageBucket: "bdatlasai.firebasestorage.app",
+      messagingSenderId: "1021100223861",
+      appId: "1:1021100223861:web:dd34c5ccda087a701fb73c"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    const provider = new firebase.auth.GoogleAuthProvider();
+
+    const $ = id => document.getElementById(id);
+    const sidebar = $("sidebar"), chatList = $("chatList"), thread = $("thread"), welcome = $("welcome");
+    const messagesEl = $("messages"), promptEl = $("prompt"), form = $("chatForm"), sendBtn = $("sendBtn");
+    const loginLock = $("loginLock"), googleLogin = $("googleLogin"), userBox = $("userBox");
+    const userPic = $("userPic"), fullName = $("fullName"), userEmail = $("userEmail");
+
+    let currentUser = null;
+    let currentChatId = localStorage.getItem("nemotron_current_chat") || makeId();
+    let chats = JSON.parse(localStorage.getItem("nemotron_chats") || "{}");
+    let aborter = null;
+    let isStreaming = false;
+
+    function makeId(){return "chat_" + Date.now() + "_" + Math.random().toString(16).slice(2)}
+    function saveLocal(){
+      localStorage.setItem("nemotron_current_chat", currentChatId);
+      localStorage.setItem("nemotron_chats", JSON.stringify(chats));
+    }
+    function currentChat(){
+      if(!chats[currentChatId]){
+        chats[currentChatId] = {id:currentChatId,title:"New Chat",messages:[],createdAt:Date.now(),updatedAt:Date.now()};
+      }
+      return chats[currentChatId];
+    }
+    function escapeHtml(text){
+      return String(text).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+    }
+    function scrollBottom(){messagesEl.scrollTop = messagesEl.scrollHeight}
+
+    function icon(name){
+      const paths = {
+        copy:'<path d="M8 8h10v12H8z"/><path d="M6 16H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+        retry:'<path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v7h-7"/>',
+        audio:'<path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>'
+      };
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' + paths[name] + '</svg>';
+    }
+
+    function renderChats(){
+      const list = Object.values(chats).sort((a,b)=>b.updatedAt-a.updatedAt);
+      chatList.innerHTML = list.length ? "" : '<div style="padding:12px;color:var(--muted);font-size:14px">No previous chats.</div>';
+      list.forEach(chat => {
+        const btn = document.createElement("button");
+        btn.className = "chat-item" + (chat.id === currentChatId ? " active" : "");
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg><span>' + escapeHtml(chat.title) + '</span>';
+        btn.onclick = () => {
+          currentChatId = chat.id;
+          saveLocal();
+          renderAll();
+          sidebar.classList.remove("open");
+        };
+        chatList.appendChild(btn);
+      });
+    }
+
+    function renderMessages(){
+      const chat = currentChat();
+      welcome.classList.toggle("hidden", chat.messages.length > 0);
+      thread.innerHTML = "";
+      chat.messages.forEach((msg, index) => addMessageNode(msg.role, msg.content, index, false));
+      scrollBottom();
+    }
+
+    function addMessageNode(role, content, index, addToChat){
+      const row = document.createElement("div");
+      row.className = "msg " + role;
+
+      if(role === "assistant"){
+        row.innerHTML =
+          '<img class="avatar" src="https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://nvidia.com/&size=256" alt="NVIDIA">' +
+          '<div><div class="bubble">' + escapeHtml(content) + '</div>' +
+          '<div class="actions">' +
+          '<button class="mini copy" title="Copy">' + icon("copy") + '</button>' +
+          '<button class="mini retry" title="Try again">' + icon("retry") + '</button>' +
+          '<button class="mini aloud" title="Read aloud">' + icon("audio") + '</button>' +
+          '</div></div>';
+        row.querySelector(".copy").onclick = () => navigator.clipboard.writeText(content);
+        row.querySelector(".retry").onclick = () => retryLast(index);
+        row.querySelector(".aloud").onclick = () => {
+          speechSynthesis.cancel();
+          speechSynthesis.speak(new SpeechSynthesisUtterance(content));
+        };
+      } else {
+        row.innerHTML = '<div class="bubble">' + escapeHtml(content) + '</div>';
+      }
+
+      thread.appendChild(row);
+      welcome.classList.add("hidden");
+      scrollBottom();
+
+      if(addToChat){
+        const chat = currentChat();
+        chat.messages.push({role,content});
+        chat.updatedAt = Date.now();
+        if(role === "user" && (chat.title === "New Chat" || !chat.title)) chat.title = content.slice(0, 38) || "New Chat";
+        saveLocal();
+        renderChats();
+        saveFirestore();
+      }
+
+      return row;
+    }
+
+    function renderAll(){
+      renderChats();
+      renderMessages();
+    }
+
+    async function saveFirestore(){
+      if(!currentUser) return;
+      const chat = currentChat();
+      await db.collection("users").doc(currentUser.uid).set({
+        name: currentUser.displayName || "",
+        email: currentUser.email || "",
+        photoURL: currentUser.photoURL || "",
+        lastModel: "NVIDIA Nemotron 3 Super",
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, {merge:true});
+
+      await db.collection("users").doc(currentUser.uid).collection("chats").doc(chat.id).set({
+        title: chat.title,
+        model: MODEL,
+        messages: chat.messages,
+        createdAt: chat.createdAt,
+        updatedAt: chat.updatedAt,
+        savedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, {merge:true});
+    }
+
+    async function loadFirestoreChats(){
+      if(!currentUser) return;
+      const snap = await db.collection("users").doc(currentUser.uid).collection("chats").orderBy("updatedAt","desc").limit(30).get();
+      snap.forEach(doc => {
+        const data = doc.data();
+        chats[doc.id] = {
+          id: doc.id,
+          title: data.title || "New Chat",
+          messages: Array.isArray(data.messages) ? data.messages : [],
+          createdAt: data.createdAt || Date.now(),
+          updatedAt: data.updatedAt || Date.now()
+        };
+      });
+      saveLocal();
+      renderAll();
+    }
+
+    async function sendMessage(text){
+      if(!currentUser){
+        loginLock.classList.remove("hidden");
+        promptEl.disabled = true;
+        return;
+      }
+
+      addMessageNode("user", text, null, true);
+      const assistantRow = addMessageNode("assistant", "", null, false);
+      const bubble = assistantRow.querySelector(".bubble");
+
+      isStreaming = true;
+      aborter = new AbortController();
+      sendBtn.classList.add("stop");
+      sendBtn.title = "Stop";
+      sendBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 7h10v10H7z"/></svg>';
+
+      let assistantText = "";
+      try{
+        const chatMessages = currentChat().messages.map(m => ({role:m.role, content:m.content}));
+        const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+          method: "POST",
+          signal: aborter.signal,
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + OPENROUTER_API_KEY,
+            "HTTP-Referer": location.origin,
+            "X-Title": "Atlas"
+          },
+          body: JSON.stringify({
+            model: MODEL,
+            stream: true,
+            reasoning: { enabled: true },
+            messages: [
+              {role:"system", content:"You are NVIDIA Nemotron 3 Super inside Atlas. Be helpful, clear, and friendly."},
+              ...chatMessages
+            ]
+          })
+        });
+
+        if(!res.ok) throw new Error(await res.text());
+
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+
+        while(true){
+          const {done,value} = await reader.read();
+          if(done) break;
+          buffer += decoder.decode(value, {stream:true});
+          const lines = buffer.split("\n");
+          buffer = lines.pop();
+
+          for(const line of lines){
+            const trimmed = line.trim();
+            if(!trimmed.startsWith("data:")) continue;
+            const data = trimmed.slice(5).trim();
+            if(data === "[DONE]") continue;
+
+            try{
+              const json = JSON.parse(data);
+              const delta = json.choices?.[0]?.delta;
+              const content = delta?.content || "";
+              if(content){
+                assistantText += content;
+                bubble.textContent = assistantText;
+                scrollBottom();
+              }
+            }catch(e){}
+          }
+        }
+
+        if(!assistantText) assistantText = "I could not generate a response. Please try again.";
+        bubble.textContent = assistantText;
+
+        const chat = currentChat();
+        chat.messages.push({role:"assistant", content:assistantText});
+        chat.updatedAt = Date.now();
+        saveLocal();
+        renderAll();
+        await saveFirestore();
+      }catch(error){
+        if(error.name !== "AbortError"){
+          bubble.textContent = "Error: " + error.message;
+        }
+      }finally{
+        isStreaming = false;
+        aborter = null;
+        sendBtn.classList.remove("stop");
+        sendBtn.title = "Send";
+        sendBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>';
+      }
+    }
+
+    function retryLast(index){
+      const chat = currentChat();
+      const assistantIndex = typeof index === "number" ? index : chat.messages.length - 1;
+      let userIndex = assistantIndex - 1;
+      while(userIndex >= 0 && chat.messages[userIndex].role !== "user") userIndex--;
+      if(userIndex < 0) return;
+
+      const text = chat.messages[userIndex].content;
+      chat.messages = chat.messages.slice(0, userIndex);
+      chat.updatedAt = Date.now();
+      saveLocal();
+      renderAll();
+      sendMessage(text);
+    }
+
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      if(isStreaming && aborter){
+        aborter.abort();
+        return;
+      }
+      const text = promptEl.value.trim();
+      if(!text) return;
+      promptEl.value = "";
+      promptEl.style.height = "54px";
+      sendMessage(text);
+    });
+
+    promptEl.addEventListener("input", () => {
+      promptEl.style.height = "54px";
+      promptEl.style.height = Math.min(promptEl.scrollHeight, 180) + "px";
+    });
+
+    promptEl.addEventListener("keydown", e => {
+      if(e.key === "Enter" && !e.shiftKey){
+        e.preventDefault();
+        form.requestSubmit();
+      }
+    });
+
+    $("newChat").onclick = () => {
+      currentChatId = makeId();
+      currentChat();
+      saveLocal();
+      renderAll();
+      sidebar.classList.remove("open");
+    };
+    $("openSide").onclick = () => sidebar.classList.add("open");
+    $("closeSide").onclick = () => sidebar.classList.remove("open");
+
+    googleLogin.onclick = async () => {
+      try{ await auth.signInWithPopup(provider); }
+      catch(error){ alert(error.message); }
+    };
+
+    userBox.onclick = async () => {
+      if(confirm("Sign out of Atlas?")) await auth.signOut();
+    };
+
+    auth.onAuthStateChanged(async user => {
+      currentUser = user;
+      if(user){
+        const name = user.displayName || "Atlas User";
+        fullName.textContent = name;
+        userEmail.textContent = user.email || "";
+        userPic.src = user.photoURL || "https://ui-avatars.com/api/?name=" + encodeURIComponent(name) + "&background=111820&color=ffffff";
+        googleLogin.classList.add("hidden");
+        userBox.classList.remove("hidden");
+        loginLock.classList.add("hidden");
+        promptEl.disabled = false;
+
+        localStorage.setItem("atlas_user", JSON.stringify({
+          uid:user.uid,
+          name,
+          email:user.email || "",
+          photoURL:user.photoURL || ""
+        }));
+
+        await db.collection("users").doc(user.uid).set({
+          name,
+          email:user.email || "",
+          photoURL:user.photoURL || "",
+          lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+        }, {merge:true});
+
+        await loadFirestoreChats();
+      }else{
+        googleLogin.classList.remove("hidden");
+        userBox.classList.add("hidden");
+        loginLock.classList.remove("hidden");
+        promptEl.disabled = true;
+        localStorage.removeItem("atlas_user");
+      }
+      renderAll();
+    });
+
+    currentChat();
+    renderAll();
+  </script>
+</body>
+</html>

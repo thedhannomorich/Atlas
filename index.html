@@ -1,1610 +1,528 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Atlas</title>
-    <link rel="icon" type="image/png" href="logo.png">
-    <!-- Font Awesome 6 (free) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
-    <!-- Google Fonts: Hind Siliguri + Poppins (exactly as requested) + fallback -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
-    <!-- MathJax config -->
-    <script>
-      window.MathJax = {
-        tex: {
-          inlineMath: [
-            ['$', '$'],
-            ['\\(', '\\)']
-          ],
-          displayMath: [
-            ['$$', '$$'],
-            ['\\[', '\\]']
-          ]
-        },
-        svg: {
-          fontCache: 'global'
-        }
-      };
-    </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <!-- marked -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <!-- Puter.js v2 -->
-    <script src="https://js.puter.com/v2/"></script>
-    <style>
-          * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        /* requested font family: Hind Siliguri, Poppins, sans-serif */
-        font-family: "Hind Siliguri", "Poppins", sans-serif;
-        background: #f5f5f7;
-        height: 100vh;
-        height: 100dvh; /* Use dynamic viewport height for mobile */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #1e1e1e;
-        transition: background 0.2s ease, color 0.2s ease;
-        line-height: 1.5;
-        overflow: hidden; /* Prevent body scrolling */
-      }
-
-      body.dark-mode {
-        background: #121212;
-        color: #e0e0e0;
-      }
-
-      /* Headings use the same family (Poppins has strong weight) */
-      h1,
-      h2,
-      h3,
-      .app-name span,
-      .login-screen h2 {
-        font-family: "Poppins", "Hind Siliguri", sans-serif;
-        font-weight: 600;
-        letter-spacing: -0.02em;
-      }
-
-      /* ----- LOGIN SCREEN (pure b/w/grey, no gradient) ----- */
-      .login-screen {
-        width: 100%;
-        max-width: 400px;
-        background: #ffffff;
-        border-radius: 28px;
-        padding: 48px 40px;
-        text-align: center;
-        border: 1px solid #d0d0d0;
-        margin: 20px;
-      }
-
-      body.dark-mode .login-screen {
-        background: #1e1e1e;
-        border-color: #3a3a3a;
-      }
-
-      .login-screen h2 {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: #000000;
-        margin-bottom: 8px;
-      }
-
-      body.dark-mode .login-screen h2 {
-        color: #ffffff;
-      }
-
-      .login-screen p {
-        color: #5a5a5a;
-        margin-bottom: 32px;
-        font-size: 1rem;
-      }
-
-      body.dark-mode .login-screen p {
-        color: #a8a8a8;
-      }
-
-      .login-btn {
-        background: #000000;
-        border: none;
-        color: white;
-        font-size: 1rem;
-        font-weight: 500;
-        padding: 14px 28px;
-        border-radius: 40px;
-        display: inline-flex;
-        align-items: center;
-        gap: 12px;
-        cursor: pointer;
-        width: 100%;
-        justify-content: center;
-        transition: background 0.2s, transform 0.1s;
-        border: 1px solid #3a3a3a;
-      }
-
-      .login-btn:hover {
-        background: #2a2a2a;
-        transform: scale(1.01);
-      }
-
-      .login-btn:active {
-        transform: scale(0.99);
-      }
-
-      .login-btn i {
-        font-size: 1.3rem;
-        color: white;
-      }
-
-      /* ----- MAIN CHAT APP (no shadows, crisp borders) ----- */
-      .chat-app {
-        width: 100%;
-        max-width: 1000px;
-        height: 90vh;
-        height: 90dvh; /* Use dynamic viewport height */
-        max-height: 900px;
-        background: #ffffff;
-        border-radius: 28px;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        margin: 16px;
-        border: 1px solid #d0d0d0;
-      }
-
-      body.dark-mode .chat-app {
-        background: #1e1e1e;
-        border-color: #3a3a3a;
-      }
-
-      .hidden {
-        display: none !important;
-      }
-
-      /* top bar */
-      .top-bar {
-        padding: 26px 46px;
-        border-bottom: 1px solid #d0d0d0;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        background: #ffffff;
-        flex-shrink: 0; /* Prevent shrinking */
-      }
-
-      body.dark-mode .top-bar {
-        border-bottom: 1px solid #3a3a3a;
-        background: #1e1e1e;
-      }
-
-      .app-name {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      /* logo.png instead of brain icon */
-      .app-name .logo-img {
-        width: 36px;
-        height: 36px;
-        background: transparent;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .app-name .logo-img img {
-        max-width: 1000%;
-        max-height: 1000%;
-        object-fit: contain;
-      }
-
-      .app-name span {
-        font-size: 1.6rem;
-        font-weight: 600;
-        color: #000000;
-      }
-
-      body.dark-mode .app-name span {
-        color: #ffffff;
-      }
-
-      .top-actions {
-        display: flex;
-        gap: 8px;
-      }
-
-      .icon-btn {
-        background: transparent;
-        border: none;
-        width: 40px;
-        height: 40px;
-        border-radius: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: background 0.2s;
-        color: #3a3a3a;
-        font-size: 1.3rem;
-      }
-
-      .icon-btn:hover {
-        background: #e0e0e0;
-      }
-
-      body.dark-mode .icon-btn:hover {
-        background: #3a3a3a;
-      }
-
-      .icon-btn i {
-        color: #000000;
-      }
-
-      body.dark-mode .icon-btn i {
-        color: #ffffff;
-      }
-
-      /* settings dropdown */
-      .settings-dropdown {
-        position: absolute;
-        top: 80px;
-        right: 24px;
-        width: 280px;
-        background: #ffffff;
-        border-radius: 20px;
-        border: 1px solid #d0d0d0;
-        padding: 20px;
-        display: none;
-        z-index: 200;
-      }
-
-      body.dark-mode .settings-dropdown {
-        background: #1e1e1e;
-        border-color: #3a3a3a;
-      }
-
-      .settings-dropdown.show {
-        display: block;
-        animation: fadeIn 0.2s ease;
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(-8px);
-        }
-
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .settings-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-      }
-
-      .settings-item span {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-weight: 500;
-        color: #000000;
-      }
-
-      body.dark-mode .settings-item span {
-        color: #ffffff;
-      }
-
-      .settings-item i {
-        font-size: 1.2rem;
-        width: 1.6rem;
-        color: #000000;
-      }
-
-      body.dark-mode .settings-item i {
-        color: #ffffff;
-      }
-
-      .settings-item select {
-        padding: 3px 11px;
-        border-radius: 30px;
-        border: 1px solid #b0b0b0;
-        background: #f0f0f0;
-        font-family: 'IBM Plex Sans';
-        font-size: 0.95rem;
-        color: #000000;
-        cursor: pointer;
-        font-weight: 500;
-      }
-
-      body.dark-mode .settings-item select {
-        background: #2a2a2a;
-        border-color: #5a5a5a;
-        color: #ffffff;
-      }
-
-      .logout-btn {
-        background: #eeeeee;
-        border: 1px solid #b0b0b0;
-        padding: 12px;
-        border-radius: 40px;
-        color: #000000;
-        font-weight: 500;
-        width: 100%;
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: background 0.2s;
-      }
-
-      .logout-btn:hover {
-        background: #d0d0d0;
-      }
-
-      body.dark-mode .logout-btn {
-        background: #2a2a2a;
-        color: #ffffff;
-        border-color: #5a5a5a;
-      }
-
-      .logout-btn:hover {
-        background: #3a3a3a;
-      }
-
-      .logout-btn i {
-        font-size: 1.1rem;
-        color: #000000;
-      }
-
-      body.dark-mode .logout-btn i {
-        color: #ffffff;
-      }
-
-      /* chat container */
-      .chat-container {
-        flex: 1 1 auto; /* Allow growing and shrinking */
-        overflow-y: auto;
-        padding: 20px 16px;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        background: #ffffff;
-        min-height: 0; /* Critical for flexbox to respect overflow */
-      }
-
-      body.dark-mode .chat-container {
-        background: #1e1e1e;
-      }
-
-      .message-wrapper {
-        display: flex;
-        flex-direction: column;
-        max-width: 90%;
-        animation: messageAppear 0.2s ease;
-      }
-
-      @keyframes messageAppear {
-        from {
-          opacity: 0;
-          transform: translateY(8px);
-        }
-
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .message-wrapper.user {
-        align-self: flex-end;
-      }
-
-      .message-wrapper.assistant {
-        align-self: flex-start;
-      }
-
-      .message-meta {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 0.75rem;
-        color: #6f6f6f;
-        margin-bottom: 18px;
-      }
-
-      .user .message-meta {
-        justify-content: flex-end;
-      }
-
-      .avatar {
-        width: 28px;
-        height: 28px;
-        border-radius: 28px;
-        background: #d0d0d0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #000000;
-      }
-
-      .avatar i {
-        font-size: 1rem;
-        color: #000000;
-      }
-
-      body.dark-mode .avatar i {
-        color: #000000;
-      }
-
-      .message-bubble {
-        padding: 16px 32px;
-        border-radius: 20px;
-        font-size: 1rem;
-        line-height: 1.5;
-        word-break: break-word;
-        border: 1px solid #d0d0d0;
-      }
-
-      .user .message-bubble {
-        background: #000000;
-        color: #ffffff;
-        border: 1px solid #3a3a3a;
-      }
-
-      .assistant .message-bubble {
-        background: #f0f0f0;
-        color: #000000;
-        border: 1px solid #d0d0d0;
-      }
-
-      body.dark-mode .user .message-bubble {
-        background: #2a2a2a;
-        color: #ffffff;
-      }
-
-      body.dark-mode .assistant .message-bubble {
-        background: #2a2a2a;
-        color: #e0e0e0;
-        border-color: #5a5a5a;
-      }
-
-      .message-bubble img.image-preview {
-        max-width: 180px;
-        border-radius: 12px;
-        margin-bottom: 8px;
-        border: 1px solid #b0b0b0;
-      }
-
-      /* math */
-      .message-bubble .MathJax {
-        font-size: 1.1em;
-      }
-
-      .message-bubble mjx-container {
-        margin: 4px 0;
-      }
-
-      /* message actions (copy, speaker, regenerate) */
-      .message-actions {
-        display: flex;
-        gap: 12px;
-        justify-content: flex-end;
-        padding: 12px 10px 0;
-        opacity: 0.6;
-        transition: opacity 0.15s;
-      }
-
-      .message-wrapper:hover .message-actions {
-        opacity: 1;
-      }
-
-      /* better tap target on mobile */
-      .message-actions button {
-        background: transparent;
-        border: 1px solid #c0c0c0;
-        color: #1e1e1e;
-        font-size: 0.8rem;
-        cursor: pointer;
-        padding: 6px 10px;
-        border-radius: 30px;
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        transition: background 0.2s;
-        min-height: 36px;
-        /* for fat finger */
-      }
-
-      .message-actions button:hover {
-        background: #e0e0e0;
-      }
-
-      body.dark-mode .message-actions button {
-        border-color: #5a5a5a;
-        color: #dddddd;
-      }
-
-      body.dark-mode .message-actions button:hover {
-        background: #3a3a3a;
-      }
-
-      .message-actions button i {
-        font-size: 1rem;
-        color: #000000;
-      }
-
-      body.dark-mode .message-actions button i {
-        color: #ffffff;
-      }
-
-      /* typing indicator */
-      .typing-indicator {
-        display: inline-flex;
-        gap: 4px;
-        align-items: center;
-        padding: 4px 8px;
-      }
-
-      .typing-indicator span {
-        width: 8px;
-        height: 8px;
-        background: #888;
-        border-radius: 50%;
-        animation: blink 1.4s infinite;
-      }
-
-      .typing-indicator span:nth-child(2) {
-        animation-delay: 0.2s;
-      }
-
-      .typing-indicator span:nth-child(3) {
-        animation-delay: 0.4s;
-      }
-
-      @keyframes blink {
-
-        0%,
-        80%,
-        100% {
-          opacity: 0.3;
-        }
-
-        40% {
-          opacity: 1;
-        }
-      }
-
-      /* INPUT SECTION */
-      .input-section {
-        padding: 12px 16px 18px;
-        background: #ffffff;
-        border-top: 1px solid #d0d0d0;
-        flex-shrink: 0; /* Prevent shrinking */
-      }
-
-      body.dark-mode .input-section {
-        background: #1e1e1e;
-        border-top: 1px solid #3a3a3a;
-      }
-
-      .input-row {
-        display: flex;
-        gap: 8px;
-        align-items: flex-end;
-        background: #f5f5f5;
-        border-radius: 24px;
-        padding: 4px 4px 4px 16px;
-        border: 1px solid #c0c0c0;
-        transition: border-color 0.2s;
-      }
-
-      .input-row:focus-within {
-        border-color: #888;
-      }
-
-      body.dark-mode .input-row {
-        background: #2a2a2a;
-        border-color: #5a5a5a;
-      }
-
-      /* add dropdown */
-      .add-menu-container {
-        position: relative;
-        display: flex;
-      }
-
-      .add-dropdown {
-        position: absolute;
-        bottom: 68px;
-        left: -18px;
-        background: #ffffff;
-        border: 1px solid #b0b0b0;
-        border-radius: 28px;
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        padding: 10px;
-        box-shadow: none;
-        z-index: 100;
-      }
-
-      body.dark-mode .add-dropdown {
-        background: #2a2a2a;
-        border-color: #5a5a5a;
-      }
-
-      .add-dropdown.hidden {
-        display: none;
-      }
-
-      .add-option {
-        background: none;
-        border: none;
-        padding: 14px 10px;
-        display: flex;
-        gap: 12px;
-        align-items: center;
-        font-size: 1rem;
-        cursor: pointer;
-        border-radius: 40px;
-        color: #000000;
-        white-space: nowrap;
-      }
-
-      .add-option:hover {
-        background: #e0e0e0;
-      }
-
-      body.dark-mode .add-option {
-        color: #ffffff;
-      }
-
-      body.dark-mode .add-option:hover {
-        background: #3a3a3a;
-      }
-
-      .add-option i {
-        font-size: 1.2rem;
-        color: #000000;
-        width: 1.6rem;
-      }
-
-      body.dark-mode .add-option i {
-        color: #ffffff;
-      }
-
-      .input-row textarea {
-        flex: 1;
-        border: none;
-        background: transparent;
-        padding: 12px 0;
-        font-family: "Hind Siliguri", "Poppins", sans-serif;
-        font-size: 1rem;
-        resize: none;
-        max-height: 120px;
-        outline: none;
-        color: #000000;
-      }
-
-      body.dark-mode .input-row textarea {
-        color: #f0f0f0;
-      }
-
-      .action-group {
-        display: flex;
-        gap: 4px;
-      }
-
-      .circle-btn {
-        width: 48px;
-        height: 50px;
-        border-radius: 26px;
-        border: 1px solid #c0c0c0;
-        background: transparent;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: background 0.2s;
-        font-size: 1.2rem;
-        flex-shrink: 0;
-      }
-
-      .circle-btn:hover {
-        background: #e0e0e0;
-      }
-
-      body.dark-mode .circle-btn:hover {
-        background: #3a3a3a;
-      }
-
-      .circle-btn i {
-        color: #000000;
-      }
-
-      body.dark-mode .circle-btn i {
-        color: #ffffff;
-      }
-
-      .circle-btn.stop-btn {
-        border-color: #b0b0b0;
-      }
-
-      #attachedPreview {
-        margin-top: 10px;
-        display: none;
-        position: relative;
-        width: fit-content;
-        animation: fadeIn 0.2s;
-      }
-
-      #previewImg {
-        max-width: 80px;
-        max-height: 80px;
-        border-radius: 12px;
-        border: 1px solid #b0b0b0;
-        background: #f0f0f0;
-      }
-
-      #removeImageBtn {
-        position: absolute;
-        top: -8px;
-        right: -8px;
-        background: #4a4a4a;
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 24px;
-        height: 24px;
-        font-size: 1rem;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 1px solid #888;
-      }
-
-      /* BETTER MOBILE CSS — remove tap transparency, bigger tap targets */
-      @media (max-width: 600px) {
-        .chat-app {
-          margin: 0;
-          height: 100vh;
-          height: 100dvh; /* Use dynamic viewport height */
-          max-height: 100vh;
-          max-height: 100dvh;
-          border-radius: 0;
-          border: none;
-          background: #ffffff;
-        }
-
-        body.dark-mode .chat-app {
-          background: #1e1e1e;
-        }
-
-        .top-bar {
-          padding: 20px 26px; /* Reduced padding */
-          min-height: 56px; /* Ensure minimum height */
-        }
-
-        .app-name span {
-          font-size: 2.7rem;
-        }
-
-        .login-screen {
-          border-radius: 24px;
-          padding: 36px 24px;
-        }
-
-        .message-wrapper {
-          max-width: 95%;
-        }
-
-        .message-actions {
-          opacity: 1;
-          /* always visible on mobile */
-          gap: 6px;
-          flex-wrap: wrap;
-        }
-
-        .message-actions button {
-          padding: 8px 12px;
-          font-size: 0.9rem;
-          background: rgba(240, 240, 240, 0.6);
-          /* subtle bg for better tap visibility */
-        }
-
-        body.dark-mode .message-actions button {
-          background: #2a2a2a;
-        }
-
-        .input-section {
-          padding: 8px 12px 12px; /* Reduced padding */
-        }
-
-        .input-row {
-          padding: 2px 2px 2px 12px; /* Reduced padding */
-        }
-
-        .input-row textarea {
-          font-size: 1rem;
-          padding: 8px 0; /* Reduced padding */
-          max-height: 100px;
-        }
-
-        .circle-btn {
-          width: 44px; /* Slightly smaller but still touch-friendly */
-          height: 44px;
-        }
-
-        .add-dropdown {
-          bottom: 55px;
-          /* avoid overlap */
-        }
-
-        .settings-dropdown {
-          right: 12px;
-          width: 260px;
-          top: 65px; /* Adjusted for smaller top bar */
-        }
-
-        /* remove any lingering transparency (blue tap) */
-        * {
-          -webkit-tap-highlight-color: transparent;
-          /* removes grey/blue flash */
-        }
-
-        /* but we keep interactive feedback via background */
-        .icon-btn:active,
-        .circle-btn:active,
-        .login-btn:active {
-          background: #d0d0d0;
-        }
-
-        body.dark-mode .icon-btn:active,
-        body.dark-mode .circle-btn:active {
-          background: #4a4a4a;
-        }
-
-        /* Ensure chat container takes available space */
-        .chat-container {
-          padding: 12px 12px;
-        }
-      }
-
-      /* Scrollbar */
-      ::-webkit-scrollbar {
-        width: 6px;
-      }
-
-      ::-webkit-scrollbar-track {
-        background: #f0f0f0;
-      }
-
-      ::-webkit-scrollbar-thumb {
-        background: #a0a0a0;
-        border-radius: 8px;
-      }
-
-      body.dark-mode ::-webkit-scrollbar-thumb {
-        background: #5a5a5a;
-      }
-
-      /* remove blue tap for all elements (mobile) */
-      * {
-        -webkit-tap-highlight-color: transparent;
-      }
-      #loginLoadingBar {
-  width: 100%;
-  height: 4px;
-  background: #f0f0f0;
-  border-radius: 4px;
-  margin-bottom: 32px;
-  overflow: hidden;
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atlas</title>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+<style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+font-weight: 400;
+    }
+
+:root {
+  --bg: #0b0f17;
+  --panel: #111827;
+  --panel-2: #0f1a2b;
+  --text: #eef2f7;
+  --muted: #9aa6b2;
+  --line: #243244;
+  --primary: #7c5cff;
+  --primary-2: #22c55e;
+  --card: #101826;
+  --card-hover: #162235;
+  --shadow: 0 24px 70px rgba(0, 0, 0, 0.5);
+  --radius: 10px;
 }
 
-#loginLoadingProgress {
-  width: 0%;
-  height: 100%;
-  background: #000000;
-  transition: width 0.3s ease;
+    body {
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        linear-gradient(180deg, #0b0f14 0%, #101720 48%, #0b0f14 100%);
+    }
+
+    .shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      min-height: 78px;
+      display: grid;
+      grid-template-columns: 190px minmax(240px, 1fr) auto;
+      align-items: center;
+      gap: 22px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-logo {
+      width: 42px;
+      height: 42px;
+      border-radius: var(--radius);
+      object-fit: cover;
+      border: 1px solid var(--line);
+      background: #ffffff;
+    }
+
+.brand span {
+  font-size: 26px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 0;
 }
 
-body.dark-mode #loginLoadingProgress {
-  background: #ffffff;
-}
-.message-bubble table {
-  border-collapse: collapse;
-  margin-top: 10px;
-  width: 100%;
+    .search {
+      position: relative;
+    }
+
+    .search svg {
+      width: 19px;
+      height: 19px;
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    .search input {
+      width: 100%;
+      height: 46px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #0f1620;
+      color: var(--text);
+      padding: 0 16px 0 44px;
+      outline: none;
+      font-size: 15px;
+      font-weight: 400;
+      transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+    }
+
+    .search input::placeholder {
+      color: #748293;
+    }
+
+    .search input:focus {
+      border-color: rgba(56, 189, 248, 0.65);
+      box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.12);
+      background: #111b26;
+    }
+
+    .google-btn {
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #ffffff;
+      color: #111827;
+      cursor: pointer;
+      padding: 0 14px;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      white-space: nowrap;
+      transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    }
+
+    .google-btn:hover {
+      transform: translateY(-2px);
+      border-color: #38bdf8;
+      box-shadow: 0 12px 26px rgba(56, 189, 248, 0.16);
+    }
+
+    .user-box {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      min-width: 0;
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .user-box img {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #dbeafe;
+      border: 1px solid var(--line);
+    }
+
+    .hero {
+      padding: 34px 0 24px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+.hero h1 {
+  max-width: 760px;
+  font-size: clamp(32px, 5vw, 54px);
+  line-height: 1.05;
+  font-weight: 700;
+  letter-spacing: 0;
 }
 
-.message-bubble th,
-.message-bubble td {
-  border: 1px solid #ccc;
-  padding: 6px 10px;
-  text-align: left;
-}
+    .hero h1 span {
+      color: var(--primary);
+    }
 
-.message-bubble th {
-  background: #f0f0f0;
+    .model-count {
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 600;
+      white-space: nowrap;
+      padding-bottom: 6px;
+    }
+
+    .models-section {
+      padding: 8px 0 36px;
+    }
+
+    .models-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(255px, 1fr));
+      gap: 14px;
+    }
+
+    .model-card {
+      position: relative;
+      min-height: 92px;
+      padding: 16px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: var(--card);
+      box-shadow: var(--shadow);
+      text-decoration: none;
+      color: var(--text);
+      display: grid;
+      grid-template-columns: 50px 1fr 30px;
+      align-items: center;
+      gap: 14px;
+      opacity: 0;
+      transform: translateY(12px);
+      animation: cardIn 420ms ease forwards;
+      transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background 180ms ease;
+    }
+
+    .model-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(56, 189, 248, 0.48);
+      background: var(--card-hover);
+      box-shadow: 0 22px 54px rgba(0, 0, 0, 0.42);
+    }
+
+    .model-logo {
+      width: 50px;
+      height: 50px;
+      border-radius: var(--radius);
+      object-fit: contain;
+      padding: 7px;
+      border: 1px solid var(--line);
+      background: #ffffff;
+    }
+
+    .model-info {
+      min-width: 0;
+    }
+
+.model-name {
+  font-size: 15px;
+  line-height: 1.35;
   font-weight: 600;
+  color: var(--text);
 }
 
-body.dark-mode .message-bubble th {
-  background: #3a3a3a;
+.model-provider {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.2;
+  font-weight: 400;
 }
-    </style>
-  </head>
-  <body>
-    <!-- Login screen -->
-    <div id="loginScreen" class="login-screen">
-      <h2>Atlas</h2>
-      <p>The Super Study Helper</p>
-      <div id="loginLoadingBar" style="width:100%; height:4px; background:#f0f0f0; border-radius:4px; margin-bottom:32px; overflow:hidden;">
-  <div id="loginLoadingProgress" style="width:0%; height:100%; background:#000000; transition:width 0.3s ease;"></div>
-</div>
-<button class="login-btn hidden" id="loginBtn">
-  <i class="fa-solid fa-circle-check"></i> Login
-</button>
-    </div>
-    <!-- Main chat app -->
-    <div id="chatApp" class="chat-app hidden">
-      <div class="top-bar">
-        <div class="app-name">
-          <!-- logo.png instead of brain icon (embedded as inline SVG fallback but we use img) -->
-          <div class="logo-img">
-            <img src="logo.png" alt="Atlas logo" style="width:65px; height:65px;">
-          </div>
-          <span>Atlas</span>
-        </div>
-        <div class="top-actions">
-          <button class="icon-btn" id="themeToggle">
-            <i class="fa-solid fa-lightbulb"></i>
-          </button>
-          <button class="icon-btn" id="settingsToggle">
-            <i class="fas fa-cog"></i>
-          </button>
-        </div>
-      </div>
-      <!-- settings panel -->
-      <div class="settings-dropdown" id="settingsPanel">
-        <div class="settings-item">
-          <span>
-            <i class="fas fa-microchip"></i> Model </span>
-          <select id="modelSelect">
-            <option value="gpt-4.1-nano">GPT-4.1 Nano</option>
-            <option value="gpt-5" selected>GPT-5</option>
-            <option value="gpt-5.2">GPT-5.2</option>
-          </select>
-        </div>
 
-        <div class="settings-item" style="margin-bottom: 12px;">
-          <span>
-            <i class="fas fa-tag"></i> Version
-          </span>
-          <span style="font-weight: 500;">1.0</span>
-        </div>
+    .model-arrow {
+      width: 30px;
+      height: 30px;
+      border-radius: var(--radius);
+      display: grid;
+      place-items: center;
+      color: var(--primary);
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+    }
 
-        <a href="https://xyz.com" target="_blank" style="text-decoration: none; display: block; margin-bottom: 20px;">
-          <button style="width: 100%; padding: 12px; border-radius: 40px; border: 1px solid #b0b0b0; background: transparent; display: flex; gap: 10px; align-items: center; justify-content: center; cursor: pointer; font-family: inherit; font-size: 1rem; color: inherit;">
-            <i class="fas fa-star"></i> What's New
-          </button>
-        </a>
+    .empty-state {
+      grid-column: 1 / -1;
+      padding: 34px 20px;
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      text-align: center;
+      color: var(--muted);
+      font-weight: 800;
+    }
 
-        <div>
-          <button class="logout-btn" id="logoutBtn">
-            <i class="fa-solid fa-right-from-bracket"></i> Sign out
-          </button>
-        </div>
+    footer {
+      padding: 22px 0 28px;
+      border-top: 1px solid var(--line);
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @keyframes cardIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 820px) {
+      .topbar {
+        padding: 16px 0;
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+
+      .user-box,
+      .google-btn {
+        justify-self: normal;
+      }
+
+      .hero {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 460px) {
+      .shell {
+        width: min(100% - 20px, 1180px);
+      }
+
+      .model-card {
+        grid-template-columns: 46px 1fr;
+      }
+
+      .model-arrow {
+        display: none;
+      }
+
+      .model-logo {
+        width: 46px;
+        height: 46px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <img class="brand-logo" src="assets/logo.png" alt="Atlas logo" />
+        <span>Atlas</span>
       </div>
-      <!-- chat messages container -->
-      <div class="chat-container" id="chatContainer">
-        <div class="message-wrapper assistant">
-          <div class="message-meta">
-            <span class="avatar">
-              <i class="fas fa-robot"></i>
-            </span>
-            <span class="timestamp" id="welcomeTime"></span>
-          </div>
-          <div class="message-bubble">I'm Atlas. I was developed by Akash Dutta!</div>
-        </div>
+
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+        <input id="searchInput" type="search" placeholder="Search AI models..." />
       </div>
-      <!-- INPUT SECTION -->
-      <div class="input-section">
-        <div class="input-row">
-          <!-- add button with dropdown -->
-          <div class="add-menu-container">
-            <button class="circle-btn" id="addBtn">
-              <i class="fas fa-plus"></i>
-            </button>
-            <div class="add-dropdown hidden" id="addDropdown">
-              <button class="add-option" id="cameraOption">
-                <i class="fas fa-camera"></i> Camera </button>
-              <button class="add-option" id="imageOption">
-                <i class="fas fa-image"></i> Image </button>
-            </div>
-          </div>
-          <input type="file" id="imageFileInput" accept="image/*" capture="environment" hidden />
-          <input type="file" id="cameraFileInput" accept="image/*" capture="environment" hidden />
-          <textarea id="userInput" placeholder="Ask Atlas..." rows="1"></textarea>
-          <div class="action-group">
-            <button class="circle-btn stop-btn hidden" id="stopBtn">
-              <i class="fa-solid fa-circle-xmark"></i>
-            </button>
-            <button class="circle-btn" id="sendBtn">
-              <i class="fas fa-paper-plane"></i>
-            </button>
-          </div>
-        </div>
-        <div id="attachedPreview">
-          <img id="previewImg" src="#" alt="preview">
-          <button id="removeImageBtn">
-            <i class="fa-regular fa-circle-xmark"></i>
-          </button>
-        </div>
+
+      <button class="google-btn" id="googleLogin">
+        <svg width="19" height="19" viewBox="0 0 48 48">
+          <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.4-.4-3.5z"/>
+          <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 16.2 4 9.5 8.5 6.3 14.7z"/>
+          <path fill="#4CAF50" d="M24 44c5.1 0 9.8-2 13.3-5.2l-6.2-5.2C29.1 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.8l-6.5 5C9.3 39.6 16 44 24 44z"/>
+          <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.2-4.2 5.6l6.2 5.2C36.9 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/>
+        </svg>
+        Continue with Google
+      </button>
+
+      <div class="user-box hidden" id="userBox">
+        <img id="userPic" src="" alt="User profile" />
+        <span id="firstName"></span>
       </div>
-    </div>
-<script>
-  (function() {
-    // DOM elements
-    const loginScreen = document.getElementById('loginScreen');
-    const chatApp = document.getElementById('chatApp');
-    const loginBtn = document.getElementById('loginBtn');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const chatContainer = document.getElementById('chatContainer');
-    const userInput = document.getElementById('userInput');
-    const sendBtn = document.getElementById('sendBtn');
-    const stopBtn = document.getElementById('stopBtn');
-    const themeToggle = document.getElementById('themeToggle');
-    const settingsToggle = document.getElementById('settingsToggle');
-    const settingsPanel = document.getElementById('settingsPanel');
-    const modelSelect = document.getElementById('modelSelect');
-    const addBtn = document.getElementById('addBtn');
-    const addDropdown = document.getElementById('addDropdown');
-    const cameraOption = document.getElementById('cameraOption');
-    const imageOption = document.getElementById('imageOption');
-    const cameraFileInput = document.getElementById('cameraFileInput');
-    const imageFileInput = document.getElementById('imageFileInput');
-    const attachedPreview = document.getElementById('attachedPreview');
-    const previewImg = document.getElementById('previewImg');
-    const removeImageBtn = document.getElementById('removeImageBtn');
-    
-    // state
-    let isAuthenticated = false;
-    let isStreaming = false;
-    let abortController = null;
-    let messages = [];
-    let attachedImageBase64 = null;
-    
-    // helpers
-    const uid = () => Date.now() + '-' + Math.random().toString(36).substring(2);
-    const formatTime12h = () => {
-      const d = new Date();
-      let hours = d.getHours();
-      const minutes = d.getMinutes().toString().padStart(2, '0');
-      const ampm = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12 || 12;
-      return `${hours}:${minutes} ${ampm}`;
+    </header>
+
+    <section class="hero">
+      <h1>Explore your <span>AI models</span></h1>
+      <div class="model-count" id="modelCount">23 models</div>
+    </section>
+
+    <main class="models-section">
+      <div class="models-grid" id="modelsGrid"></div>
+    </main>
+
+    <footer>
+      © 2026 thedhannomorich. All Rights Reserved.
+    </footer>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyA8jOSZR4Z7QtYUq4B5L1UIpL4_LWOQJb8",
+      authDomain: "bdatlasai.firebaseapp.com",
+      projectId: "bdatlasai",
+      storageBucket: "bdatlasai.firebasestorage.app",
+      messagingSenderId: "1021100223861",
+      appId: "1:1021100223861:web:dd34c5ccda087a701fb73c"
     };
-    
-    document.getElementById('welcomeTime').innerText = formatTime12h();
-    
-    const isPuterReady = () => typeof puter !== 'undefined' && puter.ai && puter.auth;
 
-    function renderMath() {
-      if (window.MathJax && window.MathJax.typesetPromise) {
-        window.MathJax.typesetPromise(Array.from(document.querySelectorAll('.message-bubble'))).catch(err => console.log('MathJax error:', err));
-      }
-    }
-    
-    // Improved authentication check
-    async function checkAuth() {
-      if (!isPuterReady()) {
-        return false;
-      }
-      
-      try {
-        // Try to get the current user
-        const user = await puter.auth.getUser();
-        
-        if (user) {
-          // Test if we can actually make an API call
-          const test = await puter.ai.chat('test', {
-            model: 'gpt-4.1-nano',
-            stream: false
-          }).catch(() => null);
-          
-          return !!test;
-        }
-        return false;
-      } catch (error) {
-        console.log('Auth check failed:', error);
-        return false;
-      }
-    }
-    
-    // Force new authentication
-    async function signIn() {
-      try {
-        // First, try to sign out any existing session
-        try {
-          await puter.auth.signOut();
-        } catch (e) {
-          // Ignore signOut errors
-        }
-        
-        // Small delay to ensure signOut completes
-        await new Promise(resolve => setTimeout(resolve, 100));
-        
-        // Sign in fresh
-        const user = await puter.auth.signIn();
-        
-        if (user) {
-          isAuthenticated = true;
-          showChatApp();
-        } else {
-          showLoginScreen();
-        }
-      } catch (error) {
-        console.error('Sign in failed:', error);
-        alert('Login failed. Please try again.');
-        showLoginScreen();
-      }
-    }
-    
-    async function initialize() {
-      if (!isPuterReady()) {
-        setTimeout(initialize, 80);
+    firebase.initializeApp(firebaseConfig);
+
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    const provider = new firebase.auth.GoogleAuthProvider();
+
+    const models = [
+      { name: "NVIDIA Nemotron 3 Super", provider: "NVIDIA", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://nvidia.com/&size=256", url: "/NVIDIANemotron3Super/index.html" },
+      { name: "Poolside Laguna M.1", provider: "Poolside", logo: "https://openrouter.ai/images/icons/poolside-logomark-solid-color.svg", url: "/PoolsideLagunaM1/index.html" },
+      { name: "OpenAI gpt-oss-120b", provider: "OpenAI", logo: "https://openrouter.ai/images/icons/OpenAI.svg", url: "/OpenAIgptoss120b/index.html" },
+      { name: "Z.ai GLM 4.5 Air", provider: "Z.ai", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://z.ai/&size=256", url: "/ZaiGLM45Air/index.html" },
+      { name: "Poolside Laguna XS.2", provider: "Poolside", logo: "https://openrouter.ai/images/icons/poolside-logomark-solid-color.svg", url: "/PoolsideLagunaXS2/index.html" },
+      { name: "OpenAI gpt-oss-20b", provider: "OpenAI", logo: "https://openrouter.ai/images/icons/OpenAI.svg", url: "/OpenAIgptoss20b/index.html" },
+      { name: "NVIDIA Nemotron 3 Ultra", provider: "NVIDIA", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://nvidia.com/&size=256", url: "/NVIDIANemotron3Ultra/index.html" },
+      { name: "NVIDIA Nemotron 3 Nano 30B A3B", provider: "NVIDIA", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://nvidia.com/&size=256", url: "/NVIDIANemotron3Nano30BA3B/index.html" },
+      { name: "Google Gemma 4 31B", provider: "Google", logo: "https://openrouter.ai/images/icons/GoogleGemini.svg", url: "/GoogleGemma431B/index.html" },
+      { name: "NVIDIA Nemotron 3 Nano Omni", provider: "NVIDIA", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://nvidia.com/&size=256", url: "/NVIDIANemotron3NanoOmni/index.html" },
+      { name: "MoonshotAI Kimi K2.6", provider: "MoonshotAI", logo: "https://openrouter.ai/images/icons/MoonshotAI.png", url: "/MoonshotAIKimiK26/index.html" },
+      { name: "NVIDIA Nemotron Nano 9B V2", provider: "NVIDIA", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://nvidia.com/&size=256", url: "/NVIDIANemotronNano9BV2/index.html" },
+      { name: "NVIDIA Nemotron Nano 12B 2 VL", provider: "NVIDIA", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://nvidia.com/&size=256", url: "/NVIDIANemotronNano12B2VL/index.html" },
+      { name: "Google Gemma 4 26B A4B", provider: "Google", logo: "https://openrouter.ai/images/icons/GoogleGemini.svg", url: "/GoogleGemma426BA4B/index.html" },
+      { name: "LiquidAI LFM2.5-1.2B-Thinking", provider: "LiquidAI", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://www.liquid.ai/&size=256", url: "/LiquidAILFM2512BThinking/index.html" },
+      { name: "LiquidAI LFM2.5-1.2B-Instruct", provider: "LiquidAI", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://www.liquid.ai/&size=256", url: "/LiquidAILFM2512BInstruct/index.html" },
+      { name: "Qwen3 Next 80B A3B Instruct", provider: "Qwen", logo: "https://openrouter.ai/images/icons/Qwen.png", url: "/Qwen3Next80BA3BInstruct/index.html" },
+      { name: "Meta Llama 3.3 70B Instruct", provider: "Meta", logo: "https://openrouter.ai/images/icons/Meta.png", url: "/MetaLlama3370BInstruct/index.html" },
+      { name: "Venice Uncensored", provider: "Venice", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://huggingface.co/&size=256", url: "/VeniceUncensored/index.html" },
+      { name: "NVIDIA Nemotron 3.5 Content Safety", provider: "NVIDIA", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://nvidia.com/&size=256", url: "/NVIDIANemotron35ContentSafety/index.html" },
+      { name: "Nous Hermes 3 405B Instruct", provider: "Nous Research", logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://nousresearch.com/&size=256", url: "/NousHermes3405BInstruct/index.html" },
+      { name: "Meta Llama 3.2 3B Instruct", provider: "Meta", logo: "https://openrouter.ai/images/icons/Meta.png", url: "/MetaLlama323BInstruct/index.html" },
+      { name: "Qwen3 Coder 480B A35B Instruct", provider: "Qwen", logo: "https://openrouter.ai/images/icons/Qwen.png", url: "/Qwen3Coder480BA35BInstruct/index.html" }
+    ];
+
+    const modelsGrid = document.getElementById("modelsGrid");
+    const searchInput = document.getElementById("searchInput");
+    const modelCount = document.getElementById("modelCount");
+    const googleLogin = document.getElementById("googleLogin");
+    const userBox = document.getElementById("userBox");
+    const userPic = document.getElementById("userPic");
+    const firstName = document.getElementById("firstName");
+
+    function renderModels(modelList) {
+      modelsGrid.innerHTML = "";
+      modelCount.textContent = `${modelList.length} model${modelList.length === 1 ? "" : "s"}`;
+
+      if (!modelList.length) {
+        modelsGrid.innerHTML = `<div class="empty-state">No models found.</div>`;
         return;
       }
-      
-      // Show loading bar animation
-      const loadingBar = document.getElementById('loginLoadingProgress');
-      const loginBtn = document.getElementById('loginBtn');
-      
-      // Animate from 0% to 90% while checking
-      loadingBar.style.width = '30%';
-      
-      const authenticated = await checkAuth();
-      
-      loadingBar.style.width = '90%';
-      
-      if (authenticated) {
-        loadingBar.style.width = '100%';
-        setTimeout(() => {
-          isAuthenticated = true;
-          showChatApp();
-        }, 300);
-      } else {
-        loadingBar.style.width = '100%';
-        setTimeout(() => {
-          // Hide loading bar, show login button
-          document.getElementById('loginLoadingBar').style.display = 'none';
-          loginBtn.classList.remove('hidden');
-        }, 300);
-      }
-    }
 
-    function showChatApp() {
-      loginScreen.classList.add('hidden');
-      chatApp.classList.remove('hidden');
-      userInput.disabled = false;
-      sendBtn.disabled = false;
-      if (messages.length === 0) {
-        chatContainer.innerHTML = '';
-        addMessage('assistant', 'I\'m Atlas. I was developed by Akash Dutta!');
-      } else {
-        refreshMessages();
-      }
-    }
+      modelList.forEach((model, index) => {
+        const card = document.createElement("a");
+        card.className = "model-card";
+        card.href = model.url;
+        card.style.animationDelay = `${index * 22}ms`;
 
-    function showLoginScreen() {
-      loginScreen.classList.remove('hidden');
-      chatApp.classList.add('hidden');
-      isAuthenticated = false;
-    }
+        card.innerHTML = `
+          <img class="model-logo" src="${model.logo}" alt="${model.name} logo" />
+          <div class="model-info">
+            <div class="model-name">${model.name}</div>
+            <div class="model-provider">${model.provider}</div>
+          </div>
+          <div class="model-arrow" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+              <path d="M5 12h14"></path>
+              <path d="m13 5 7 7-7 7"></path>
+            </svg>
+          </div>
+        `;
 
-    function addMessage(role, content, status = 'complete', imageBase64 = null) {
-      const msg = {
-        id: uid(),
-        role,
-        content,
-        timestamp: new Date().toISOString(),
-        status,
-        image: imageBase64
-      };
-      messages.push(msg);
-      renderMessage(msg);
-      scrollToBottom();
-      renderMath();
-      return msg.id;
-    }
+        card.addEventListener("click", async () => {
+          const user = auth.currentUser;
+          if (!user) return;
 
-    function renderMessage(msg) {
-      const wrapper = document.createElement('div');
-      wrapper.className = `message-wrapper ${msg.role}`;
-      wrapper.dataset.messageId = msg.id;
-      
-      const meta = document.createElement('div');
-      meta.className = 'message-meta';
-      const avatarIcon = msg.role === 'user' ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>';
-      meta.innerHTML = `
-        <span class="avatar">${avatarIcon}</span>
-        <span class="timestamp">${formatTime12h()}</span>
-      `;
-      wrapper.appendChild(meta);
-      
-      const bubble = document.createElement('div');
-      bubble.className = 'message-bubble';
-      let innerHtml = '';
-      if (msg.image) innerHtml += `<img src="${msg.image}" class="image-preview">`;
-      innerHtml += marked.parse(msg.content || '');
-      bubble.innerHTML = innerHtml;
-      wrapper.appendChild(bubble);
-      
-      const actionsDiv = document.createElement('div');
-      actionsDiv.className = 'message-actions';
-      actionsDiv.innerHTML = `
-        <button class="copy-msg">
-          <i class="fa-slab fa-regular fa-copy"></i>
-        </button>
-        <button class="speaker-msg">
-          <i class="fas fa-audio-description"></i>
-        </button>
-      `;
-      if (msg.role === 'assistant') {
-        actionsDiv.innerHTML += `
-          <button class="regenerate-msg">
-            <i class="fas fa-sync"></i>
-          </button>`;
-      }
-      wrapper.appendChild(actionsDiv);
-      
-      chatContainer.appendChild(wrapper);
-    }
+          await db.collection("users").doc(user.uid).set({
+            lastSelectedModel: model.name,
+            lastSelectedModelUrl: model.url,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+          }, { merge: true });
+        });
 
-    function refreshMessages() {
-      chatContainer.innerHTML = '';
-      messages.forEach(m => renderMessage(m));
-      scrollToBottom();
-      renderMath();
-    }
-
-    function scrollToBottom() {
-      chatContainer.scrollTo({
-        top: chatContainer.scrollHeight,
-        behavior: 'smooth'
+        modelsGrid.appendChild(card);
       });
     }
-    
-    async function sendMessage(text, imageBase64 = null) {
-      if (!text.trim() && !imageBase64) return;
-      
-      // Re-check authentication before sending
-      const isAuth = await checkAuth();
-      if (!isAuth) {
-        isAuthenticated = false;
-        showLoginScreen();
-        return;
-      }
-      
-      if (isStreaming) return;
-      
-      addMessage('user', text || '📷 Image', 'complete', imageBase64);
-      
-      const assistantId = uid();
-      const wrapper = document.createElement('div');
-      wrapper.className = 'message-wrapper assistant';
-      wrapper.dataset.messageId = assistantId;
-      
-      const meta = document.createElement('div');
-      meta.className = 'message-meta';
-      meta.innerHTML = `
-        <span class="avatar">
-          <i class="fas fa-robot"></i>
-        </span>
-        <span class="timestamp">${formatTime12h()}</span>`;
-      wrapper.appendChild(meta);
-      
-      const bubble = document.createElement('div');
-      bubble.className = 'message-bubble';
-      const indicator = document.createElement('span');
-      indicator.className = 'typing-indicator';
-      indicator.innerHTML = '<span></span><span></span><span></span>';
-      bubble.appendChild(indicator);
-      wrapper.appendChild(bubble);
-      
-      const actionsDiv = document.createElement('div');
-      actionsDiv.className = 'message-actions';
-      actionsDiv.innerHTML = `
-        <button class="copy-msg">
-          <i class="fa-slab fa-regular fa-copy"></i>
-        </button>
-        <button class="speaker-msg">
-          <i class="fas fa-audio-description"></i>
-        </button>
-        <button class="regenerate-msg">
-          <i class="fas fa-sync"></i>
-        </button>`;
-      wrapper.appendChild(actionsDiv);
-      
-      chatContainer.appendChild(wrapper);
-      scrollToBottom();
-      
-      const assistantMsg = {
-        id: assistantId,
-        role: 'assistant',
-        content: '',
-        timestamp: new Date().toISOString(),
-        status: 'streaming',
-        image: null
-      };
-      messages.push(assistantMsg);
-      
-      isStreaming = true;
-      sendBtn.disabled = true;
-      stopBtn.classList.remove('hidden');
-      abortController = new AbortController();
-      
-      try {
-        let response;
-        
-        // System prompt for Markdown formatting
-        const systemPrompt = {
-          role: "system",
-          content: `
-Always respond using Markdown formatting.
 
-Rules:
-- Use ## for main headings
-- Use ### for subheadings
-- Use bullet lists (-)
-- Use numbered lists for steps
-- Use tables when showing structured information
-- Use **bold** for important terms
-- Use code blocks for code
-- Avoid long plain paragraphs
-`
-        };
-        
-        if (imageBase64) {
-          response = await puter.ai.chat(text.trim() || 'Describe this image', imageBase64, {
-            model: modelSelect.value,
-            stream: true,
-            signal: abortController.signal
-          });
-        } else {
-          // Build conversation with system prompt
-          const conversationForAI = [
-            systemPrompt,
-            ...messages
-              .filter(m => m.id !== assistantId)
-              .map(m => ({
-                role: m.role,
-                content: m.content
-              }))
-          ];
-          
-          response = await puter.ai.chat(conversationForAI, {
-            model: modelSelect.value,
-            stream: true,
-            signal: abortController.signal
-          });
-        }
-        
-        let fullText = '';
-        bubble.innerHTML = ''; // clear indicator
-        
-        for await (const part of response) {
-          if (abortController.signal.aborted) break;
-          if (part?.text) {
-            fullText += part.text;
-            bubble.innerHTML = marked.parse(fullText);
-            scrollToBottom();
-            renderMath();
-          }
-        }
-        
-        if (!abortController.signal.aborted) {
-          assistantMsg.content = fullText;
-        } else {
-          bubble.innerHTML = marked.parse(fullText + ' ⏸️');
-          assistantMsg.content = fullText + ' ⏸️';
-          renderMath();
-        }
-      } catch (err) {
-        if (err.message?.includes('authenticate') || err.message?.includes('auth')) {
-          isAuthenticated = false;
-          showLoginScreen();
-        } else {
-          bubble.innerHTML = 'Error: ' + (err.message || 'unknown');
-        }
-      } finally {
-        isStreaming = false;
-        sendBtn.disabled = false;
-        stopBtn.classList.add('hidden');
-        abortController = null;
-      }
-    }
-    
-    // ----- event listeners -----
-    loginBtn.addEventListener('click', signIn);
-    
-    addBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      addDropdown.classList.toggle('hidden');
-    });
-    
-    document.addEventListener('click', (e) => {
-      if (!addBtn.contains(e.target) && !addDropdown.contains(e.target)) {
-        addDropdown.classList.add('hidden');
-      }
-    });
-    
-    cameraOption.addEventListener('click', () => {
-      cameraFileInput.click();
-      addDropdown.classList.add('hidden');
-    });
-    
-    imageOption.addEventListener('click', () => {
-      imageFileInput.click();
-      addDropdown.classList.add('hidden');
+    searchInput.addEventListener("input", () => {
+      const query = searchInput.value.trim().toLowerCase();
+
+      const filteredModels = models.filter(model =>
+        model.name.toLowerCase().includes(query) ||
+        model.provider.toLowerCase().includes(query)
+      );
+
+      renderModels(filteredModels);
     });
 
-    function handleImageSelected(fileInput) {
-      const file = fileInput.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        attachedImageBase64 = e.target.result;
-        previewImg.src = attachedImageBase64;
-        attachedPreview.style.display = 'block';
-      };
-      reader.readAsDataURL(file);
-    }
-    
-    cameraFileInput.addEventListener('change', () => handleImageSelected(cameraFileInput));
-    imageFileInput.addEventListener('change', () => handleImageSelected(imageFileInput));
-    
-    removeImageBtn.addEventListener('click', () => {
-      attachedImageBase64 = null;
-      cameraFileInput.value = '';
-      imageFileInput.value = '';
-      attachedPreview.style.display = 'none';
-    });
-    
-    sendBtn.addEventListener('click', () => {
-      const text = userInput.value.trim();
-      sendMessage(text, attachedImageBase64);
-      userInput.value = '';
-      userInput.style.height = 'auto';
-      attachedImageBase64 = null;
-      cameraFileInput.value = '';
-      imageFileInput.value = '';
-      attachedPreview.style.display = 'none';
-    });
-    
-    userInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendBtn.click();
-      }
-    });
-    
-    userInput.addEventListener('input', function() {
-      this.style.height = 'auto';
-      this.style.height = this.scrollHeight + 'px';
-    });
-    
-    stopBtn.addEventListener('click', () => {
-      if (abortController) abortController.abort();
-      isStreaming = false;
-      sendBtn.disabled = false;
-      stopBtn.classList.add('hidden');
-    });
-    
-    themeToggle.addEventListener('click', () => {
-      document.body.classList.toggle('dark-mode');
-      const dark = document.body.classList.contains('dark-mode');
-      localStorage.setItem('atlas-theme', dark ? 'dark' : 'light');
-    });
-    
-    if (localStorage.getItem('atlas-theme') === 'dark') {
-      document.body.classList.add('dark-mode');
-    }
-    
-    settingsToggle.addEventListener('click', (e) => {
-      e.stopPropagation();
-      settingsPanel.classList.toggle('show');
-    });
-    
-    document.addEventListener('click', (e) => {
-      if (!settingsPanel.contains(e.target) && !settingsToggle.contains(e.target)) {
-        settingsPanel.classList.remove('show');
-      }
-    });
-    
-    chatContainer.addEventListener('click', async (e) => {
-      const btn = e.target.closest('button');
-      if (!btn) return;
-      
-      const wrapper = btn.closest('.message-wrapper');
-      if (!wrapper) return;
-      
-      const msgId = wrapper.dataset.messageId;
-      const msg = messages.find(m => m.id === msgId);
-      if (!msg) return;
-      
-      if (btn.classList.contains('copy-msg')) {
-        await navigator.clipboard.writeText(msg.content);
-        const orig = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-check" style="color:#00aa00"></i>';
-        setTimeout(() => btn.innerHTML = orig, 1200);
-      }
-      
-      if (btn.classList.contains('speaker-msg')) {
-        const utterance = new SpeechSynthesisUtterance(msg.content);
-        speechSynthesis.speak(utterance);
-      }
-      
-      if (btn.classList.contains('regenerate-msg') && msg.role === 'assistant') {
-        const idx = messages.findIndex(m => m.id === msgId);
-        let userMsg = null,
-            userImage = null;
-        for (let i = idx - 1; i >= 0; i--) {
-          if (messages[i].role === 'user') {
-            userMsg = messages[i].content;
-            userImage = messages[i].image || null;
-            break;
-          }
-        }
-        if (userMsg !== null) {
-          messages = messages.slice(0, idx);
-          refreshMessages();
-          await sendMessage(userMsg, userImage);
-        }
-      }
-    });
-    
-    logoutBtn.addEventListener('click', async () => {
+    googleLogin.addEventListener("click", async () => {
       try {
-        await puter.auth.signOut();
-      } catch (e) {
-        console.log('Sign out error:', e);
+        await auth.signInWithPopup(provider);
+      } catch (error) {
+        alert(error.message);
       }
-      
-      // Clear all state
-      isAuthenticated = false;
-      messages = [];
-      attachedImageBase64 = null;
-      attachedPreview.style.display = 'none';
-      cameraFileInput.value = '';
-      imageFileInput.value = '';
-      
-      // Clear chat container
-      chatContainer.innerHTML = '';
-      
-      // Show login screen
-      showLoginScreen();
-      settingsPanel.classList.remove('show');
     });
-    
-    // Initialize the app
-    initialize();
-  })();
-</script>
-  </body>
+
+    auth.onAuthStateChanged(async user => {
+      if (user) {
+        const displayName = user.displayName || "Atlas User";
+        const givenName = displayName.split(" ")[0];
+
+        firstName.textContent = givenName;
+        userPic.src = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=111820&color=ffffff`;
+
+        googleLogin.classList.add("hidden");
+        userBox.classList.remove("hidden");
+
+        await db.collection("users").doc(user.uid).set({
+          name: displayName,
+          firstName: givenName,
+          email: user.email,
+          photoURL: user.photoURL || "",
+          lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+      } else {
+        googleLogin.classList.remove("hidden");
+        userBox.classList.add("hidden");
+      }
+    });
+
+    renderModels(models);
+  </script>
+</body>
 </html>
